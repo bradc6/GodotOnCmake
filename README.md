@@ -14,11 +14,13 @@ Godot is a very cool engine that offers a great mixture of great features some u
 All of this is not to say "Everyone should use SCons" or anything of that nature and in the interest of fairness here is the official Godot SCons usage[https://docs.godotengine.org/en/stable/contributing/development/compiling/introduction_to_the_buildsystem.html]. So do your own investigation to determine the ROI on which to use.
 
 ##Features###
+
   * Cmake scripts to build Godot [See below]
   * Debug helpers for different IDEs that we've found helpful
 
 
 ##Status###
+
 The Cmake build scripts are SUPER ALPHA so expect to modify and [hopefully] contribute back upstream. The scripts at time of writing work on Godot 4.0 RC1.
 What builds currently? Located in the "develop" branch
 
@@ -37,12 +39,14 @@ What builds currently? Located in the "develop" branch
     - [ ] iOS
 
 ##Contact###
+
 Please create pull requests and issues @ https://github.com/bradc6/GotdotOnCmake
 
 If this becomes popular enough I'll move it into a org.
 
 
 ##Donate###
+
 If you feel so inclined.....
 
 https://www.paypal.com/donate/?business=PKK59T52GDT3Y&no_recurring=0&item_name=Thank+you+for+supporting+the+creation+of+cool+stuff.+Who%27s+awesome?+You+awesome%21&currency_code=USD
