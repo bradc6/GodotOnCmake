@@ -30,7 +30,7 @@ What builds currently? Located in the "develop" branch
  - [-] Godot Editor
     - [-] Linux (x86_64 Debug)
     - [ ] MacOS
-    - [ ] Windows
+    - [-] Windows (x86_64 Debug)
  - [ ] Godot Client Templates
     - [ ] Linux
     - [ ] MacOS
