@@ -1,15 +1,3 @@
-#Enforce the highest possible version that the current Ubuntu LTS provides
-#by default. We want to be sure to have the ability to attach as many things
-#to the target as modern cmake code affords us
-cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
-
-set(GODOT_SOURCE_ROOT_THIRDPARTY_DIR ${GODOT_ENGINE_ROOT_DIRECTORY}/thirdparty)
-set(GODOT_MODULES_BASE_DIR ${GODOT_ENGINE_ROOT_DIRECTORY}/modules)
-set(GODOT_FAKEGEN_ROOT_DIR ${CMAKE_CURRENT_LIST_DIR}/../../FakeGen)
-
-#This variable holds all the targets of this subdirectory
-set(GODOT_MODULES_LIBRARIES_INTERNAL)
-
 ####################################
 #godot-module-astcenc
 ####################################
@@ -20,9 +8,8 @@ set(GODOT_MODULE_ASTCENC_SOURCE
 	${GODOT_MODULE_ASTCENC_DIR}/register_types.cpp
 	${GODOT_MODULE_ASTCENC_DIR}/register_types.h
 	)
-add_library(godot-module-astcenc STATIC ${GODOT_MODULE_ASTCENC_SOURCE})
+godot_add_library(godot-module-astcenc modules STATIC ${GODOT_MODULE_ASTCENC_SOURCE})
 target_link_libraries(godot-module-astcenc PUBLIC godot-io astcenc)
-list(APPEND GODOT_MODULES_LIBRARIES_INTERNAL godot-module-astcenc)
 
 ####################################
 #godot-module-basis_universal
@@ -32,9 +19,8 @@ set(GODOT_MODULE_BASIS_UNIVERSAL_SOURCE
 	${GODOT_MODULE_BASIS_UNIVERSAL_DIR}/register_types.cpp
 	${GODOT_MODULE_BASIS_UNIVERSAL_DIR}/register_types.h
 	)
-add_library(godot-module-basis-universal STATIC ${GODOT_MODULE_BASIS_UNIVERSAL_SOURCE})
+godot_add_library(godot-module-basis-universal modules STATIC ${GODOT_MODULE_BASIS_UNIVERSAL_SOURCE})
 target_link_libraries(godot-module-basis-universal PUBLIC godot-object basis_universal)
-list(APPEND GODOT_MODULES_LIBRARIES_INTERNAL godot-module-basis-universal)
 
 ####################################
 #godot-module-bmp
@@ -46,9 +32,8 @@ set(GODOT_MODULE_BMP_SOURCE
 	${GODOT_MODULE_BMP_DIR}/register_types.cpp
 	${GODOT_MODULE_BMP_DIR}/register_types.h
 	)
-add_library(godot-module-bmp STATIC ${GODOT_MODULE_BMP_SOURCE})
+godot_add_library(godot-module-bmp modules STATIC ${GODOT_MODULE_BMP_SOURCE})
 target_link_libraries(godot-module-bmp PUBLIC godot-io)
-list(APPEND GODOT_MODULES_LIBRARIES_INTERNAL godot-module-bmp)
 
 ####################################
 #godot-module-camera
@@ -63,9 +48,8 @@ set(GODOT_MODULE_CAMERA_SOURCE
 	${GODOT_MODULE_CAMERA_DIR}/register_types.h
 	)
 
-add_library(godot-module-camera STATIC ${GODOT_MODULE_CAMERA_SOURCE})
+godot_add_library(godot-module-camera modules STATIC ${GODOT_MODULE_CAMERA_SOURCE})
 target_link_libraries(godot-module-camera PUBLIC godot-object)
-list(APPEND GODOT_MODULES_LIBRARIES_INTERNAL godot-module-camera)
 
 ####################################
 #godot-module-csg
@@ -99,9 +83,8 @@ set(GODOT_MODULE_CSG_SOURCE
 	${GODOT_MODULE_CSG_DIR}/register_types.h
 	)
 
-add_library(godot-module-csg STATIC ${GODOT_MODULE_CSG_SOURCE})
-target_link_libraries(godot-module-csg PUBLIC godot-math godot-thirdparty-misc)
-list(APPEND GODOT_MODULES_LIBRARIES_INTERNAL godot-module-csg)
+godot_add_library(godot-module-csg modules STATIC ${GODOT_MODULE_CSG_SOURCE})
+target_link_libraries(godot-module-csg PUBLIC godot-math godot-thirdparty-misc zlib)
 
 ####################################
 #godot-module-cvtt
@@ -114,9 +97,8 @@ set(GODOT_MODULE_CVTT_SOURCE
 	${GODOT_MODULE_CVTT_DIR}/register_types.h
 	)
 
-add_library(godot-module-cvtt STATIC ${GODOT_MODULE_CVTT_SOURCE})
+godot_add_library(godot-module-cvtt modules STATIC ${GODOT_MODULE_CVTT_SOURCE})
 target_link_libraries(godot-module-cvtt PUBLIC godot-io cvtt)
-list(APPEND GODOT_MODULES_LIBRARIES_INTERNAL godot-module-cvtt)
 
 ####################################
 #godot-module-dds
@@ -128,9 +110,8 @@ set(GODOT_MODULE_DDS_SOURCE
 	${GODOT_MODULE_DDS_DIR}/texture_loader_dds.cpp
 	${GODOT_MODULE_DDS_DIR}/texture_loader_dds.h
 	)
-add_library(godot-module-dds STATIC ${GODOT_MODULE_DDS_SOURCE})
+godot_add_library(godot-module-dds modules STATIC ${GODOT_MODULE_DDS_SOURCE})
 target_link_libraries(godot-module-dds PUBLIC godot-io)
-list(APPEND GODOT_MODULES_LIBRARIES_INTERNAL godot-module-dds)
 
 ####################################
 #godot-module-denoise
@@ -144,9 +125,8 @@ set(GODOT_MODULE_DENOISE_SOURCE
 	${GODOT_MODULE_DENOISE_DIR}/register_types.cpp
 	${GODOT_MODULE_DENOISE_DIR}/register_types.h
 	)
-add_library(godot-module-denoise STATIC ${GODOT_MODULE_DENOISE_SOURCE})
+godot_add_library(godot-module-denoise modules STATIC ${GODOT_MODULE_DENOISE_SOURCE})
 target_link_libraries(godot-module-denoise PUBLIC godot-object oidn)
-list(APPEND GODOT_MODULES_LIBRARIES_INTERNAL godot-module-denoise)
 
 ####################################
 #godot-module-enet
@@ -163,9 +143,8 @@ set(GODOT_MODULE_ENET_SOURCE
 	${GODOT_MODULE_ENET_DIR}/register_types.h
 	${GODOT_SOURCE_ROOT_THIRDPARTY_DIR}/enet/godot.cpp
 	)
-add_library(godot-module-enet STATIC ${GODOT_MODULE_ENET_SOURCE})
+godot_add_library(godot-module-enet modules STATIC ${GODOT_MODULE_ENET_SOURCE})
 target_link_libraries(godot-module-enet PUBLIC godot-object godot-io godot-crypto enet)
-list(APPEND GODOT_MODULES_LIBRARIES_INTERNAL godot-module-enet)
 
 ####################################
 #godot-module-etcpak
@@ -177,9 +156,8 @@ set(GODOT_MODULE_ETCPAK_SOURCE
 	${GODOT_MODULE_ETCPAK_DIR}/register_types.cpp
 	${GODOT_MODULE_ETCPAK_DIR}/register_types.h
 	)
-add_library(godot-module-etcpak STATIC ${GODOT_MODULE_ETCPAK_SOURCE})
+godot_add_library(godot-module-etcpak modules STATIC ${GODOT_MODULE_ETCPAK_SOURCE})
 target_link_libraries(godot-module-etcpak PUBLIC godot-io etcpak)
-list(APPEND GODOT_MODULES_LIBRARIES_INTERNAL godot-module-etcpak)
 
 ####################################
 #godot-module-freetype
@@ -190,9 +168,8 @@ set(GODOT_MODULE_FREETYPE_SOURCE
 	${GODOT_MODULE_FREETYPE_DIR}/register_types.h
 	${GODOT_MODULE_FREETYPE_DIR}/uwpdef.h
 	)
-add_library(godot-module-freetype STATIC ${GODOT_MODULE_FREETYPE_SOURCE})
+godot_add_library(godot-module-freetype modules STATIC ${GODOT_MODULE_FREETYPE_SOURCE})
 target_link_libraries(godot-module-freetype PUBLIC godot-object freetype)
-list(APPEND GODOT_MODULES_LIBRARIES_INTERNAL godot-module-freetype)
 
 ####################################
 #godot-module-gdscript
@@ -242,14 +219,37 @@ set(GODOT_MODULE_GDSCRIPT_SOURCE
 	${GODOT_MODULE_GDSCRIPT_DIR}/language_server/godot_lsp.h
 	${GODOT_MODULE_GDSCRIPT_DIR}/language_server/gdscript_text_document.cpp
 	${GODOT_MODULE_GDSCRIPT_DIR}/language_server/gdscript_language_server.h
+	${GODOT_MODULE_GDSCRIPT_DIR}/language_server/gdscript_language_server.h
 	${GODOT_MODULE_GDSCRIPT_DIR}/register_types.cpp
 	${GODOT_MODULE_GDSCRIPT_DIR}/register_types.h
 	)
 
-add_library(godot-module-gdscript STATIC ${GODOT_MODULE_GDSCRIPT_SOURCE})
-target_link_libraries(godot-module-gdscript PUBLIC godot-object)
-target_include_directories(godot-module-gdscript PRIVATE ${GODOT_FAKEGEN_ROOT_DIR})
-list(APPEND GODOT_MODULES_LIBRARIES_INTERNAL godot-module-gdscript)
+#Godot GDScript
+set(GODOT_EDITOR_SCRIPT_TEMPLATES_SOURCE_DIR ${GODOT_ENGINE_ROOT_DIRECTORY}/modules/gdscript/editor/script_templates)
+set(GODOT_EDITOR_GDSCRIPT_TEMPLATES_SOURCE
+	${GODOT_EDITOR_SCRIPT_TEMPLATES_SOURCE_DIR}/EditorScript/basic_editor_script.gd
+	${GODOT_EDITOR_SCRIPT_TEMPLATES_SOURCE_DIR}/VisualShaderNodeCustom/basic.gd
+	${GODOT_EDITOR_SCRIPT_TEMPLATES_SOURCE_DIR}/EditorScenePostImport/no_comments.gd
+	${GODOT_EDITOR_SCRIPT_TEMPLATES_SOURCE_DIR}/EditorScenePostImport/basic_import_script.gd
+	${GODOT_EDITOR_SCRIPT_TEMPLATES_SOURCE_DIR}/Node/default.gd
+	${GODOT_EDITOR_SCRIPT_TEMPLATES_SOURCE_DIR}/EditorPlugin/plugin.gd
+	${GODOT_EDITOR_SCRIPT_TEMPLATES_SOURCE_DIR}/CharacterBody2D/basic_movement.gd
+	${GODOT_EDITOR_SCRIPT_TEMPLATES_SOURCE_DIR}/Object/empty.gd
+	${GODOT_EDITOR_SCRIPT_TEMPLATES_SOURCE_DIR}/CharacterBody3D/basic_movement.gd
+	)
+
+set(GENERATED_EDITOR_SCRIPT_TEMPLATES_OUTPUT ${CMAKE_BINARY_INCLUDE_DIR}/editor/script_templates/templates.gen.h)
+GENERATE_GODOT_GDSCRIPT_EDITOR_TEMPLATES("${GODOT_EDITOR_GDSCRIPT_TEMPLATES_SOURCE}" "${GENERATED_EDITOR_SCRIPT_TEMPLATES_OUTPUT}")
+
+godot_add_library(godot-module-gdscript modules STATIC
+								${GODOT_MODULE_GDSCRIPT_SOURCE}
+								${GENERATED_EDITOR_SCRIPT_TEMPLATES_OUTPUT})
+target_link_libraries(godot-module-gdscript PUBLIC godot-object minizip)
+set_property(TARGET godot-module-gdscript PROPERTY CXX_STANDARD 17)
+if (MSVC)
+	# This is a very unfortunate workaround -- in release, this file essentially hangs compilation with MSVC.
+	set_source_files_properties(${GODOT_MODULE_GDSCRIPT_DIR}/gdscript_vm.cpp PROPERTIES COMPILE_FLAGS /Od)
+endif()
 
 set(GODOT_MODULE_GDSCRIPT_RESOURCES
 	# ${GODOT_MODULE_GDSCRIPT_DIR}/doc_classes/GDScript.xml
@@ -1068,68 +1068,14 @@ set(GODOT_MODULE_GLSLANG_SOURCE
 	${GODOT_MODULE_GLSLANG_DIR}/register_types.cpp
 	${GODOT_MODULE_GLSLANG_DIR}/register_types.h
 	)
-add_library(godot-module-glslang STATIC ${GODOT_MODULE_GLSLANG_SOURCE})
+godot_add_library(godot-module-glslang modules STATIC ${GODOT_MODULE_GLSLANG_SOURCE})
 target_link_libraries(godot-module-glslang PUBLIC godot-object godot-glslang)
-list(APPEND GODOT_MODULES_LIBRARIES_INTERNAL godot-module-glslang)
 
 
 ####################################
 #godot-module-gltf
 ####################################
-set(GODOT_MODULE_GLTF_DIR ${GODOT_MODULES_BASE_DIR}/gltf)
-set(GODOT_MODULE_GLTF_SOURCE
-	${GODOT_MODULE_GLTF_DIR}/editor/editor_import_blend_runner.h
-	${GODOT_MODULE_GLTF_DIR}/editor/editor_scene_exporter_gltf_plugin.h
-	${GODOT_MODULE_GLTF_DIR}/editor/editor_scene_importer_gltf.cpp
-	${GODOT_MODULE_GLTF_DIR}/editor/editor_scene_exporter_gltf_plugin.cpp
-	${GODOT_MODULE_GLTF_DIR}/editor/editor_scene_importer_fbx.h
-	${GODOT_MODULE_GLTF_DIR}/editor/editor_scene_importer_blend.h
-	${GODOT_MODULE_GLTF_DIR}/editor/editor_scene_importer_fbx.cpp
-	${GODOT_MODULE_GLTF_DIR}/editor/editor_import_blend_runner.cpp
-	${GODOT_MODULE_GLTF_DIR}/editor/editor_scene_importer_gltf.h
-	${GODOT_MODULE_GLTF_DIR}/editor/editor_scene_importer_blend.cpp
-	${GODOT_MODULE_GLTF_DIR}/extensions/gltf_document_extension.h
-	${GODOT_MODULE_GLTF_DIR}/extensions/gltf_light.cpp
-	${GODOT_MODULE_GLTF_DIR}/extensions/gltf_spec_gloss.cpp
-	${GODOT_MODULE_GLTF_DIR}/extensions/gltf_light.h
-	${GODOT_MODULE_GLTF_DIR}/extensions/SCsub
-	${GODOT_MODULE_GLTF_DIR}/extensions/gltf_document_extension.cpp
-	${GODOT_MODULE_GLTF_DIR}/extensions/gltf_document_extension_convert_importer_mesh.cpp
-	${GODOT_MODULE_GLTF_DIR}/extensions/gltf_document_extension_convert_importer_mesh.h
-	${GODOT_MODULE_GLTF_DIR}/extensions/gltf_spec_gloss.h
-	${GODOT_MODULE_GLTF_DIR}/gltf_defines.h
-	${GODOT_MODULE_GLTF_DIR}/gltf_document.cpp
-	${GODOT_MODULE_GLTF_DIR}/gltf_document.h
-	${GODOT_MODULE_GLTF_DIR}/gltf_state.cpp
-	${GODOT_MODULE_GLTF_DIR}/gltf_state.h
-	${GODOT_MODULE_GLTF_DIR}/gltf_template_convert.h
-	${GODOT_MODULE_GLTF_DIR}/register_types.cpp
-	${GODOT_MODULE_GLTF_DIR}/register_types.h
-	${GODOT_MODULE_GLTF_DIR}/structures/gltf_animation.h
-	${GODOT_MODULE_GLTF_DIR}/structures/gltf_buffer_view.h
-	${GODOT_MODULE_GLTF_DIR}/structures/gltf_node.cpp
-	${GODOT_MODULE_GLTF_DIR}/structures/gltf_accessor.cpp
-	${GODOT_MODULE_GLTF_DIR}/structures/gltf_skeleton.cpp
-	${GODOT_MODULE_GLTF_DIR}/structures/gltf_camera.cpp
-	${GODOT_MODULE_GLTF_DIR}/structures/gltf_texture_sampler.cpp
-	${GODOT_MODULE_GLTF_DIR}/structures/gltf_texture.cpp
-	${GODOT_MODULE_GLTF_DIR}/structures/gltf_skin.h
-	${GODOT_MODULE_GLTF_DIR}/structures/gltf_camera.h
-	${GODOT_MODULE_GLTF_DIR}/structures/gltf_skin.cpp
-	${GODOT_MODULE_GLTF_DIR}/structures/gltf_buffer_view.cpp
-	${GODOT_MODULE_GLTF_DIR}/structures/gltf_mesh.h
-	${GODOT_MODULE_GLTF_DIR}/structures/gltf_node.h
-	${GODOT_MODULE_GLTF_DIR}/structures/gltf_mesh.cpp
-	${GODOT_MODULE_GLTF_DIR}/structures/gltf_texture_sampler.h
-	${GODOT_MODULE_GLTF_DIR}/structures/gltf_texture.h
-	${GODOT_MODULE_GLTF_DIR}/structures/gltf_accessor.h
-	${GODOT_MODULE_GLTF_DIR}/structures/gltf_skeleton.h
-	${GODOT_MODULE_GLTF_DIR}/structures/gltf_animation.cpp
-	)
-
-add_library(godot-module-gltf STATIC ${GODOT_MODULE_GLTF_SOURCE})
-target_link_libraries(godot-module-gltf PUBLIC godot-object)
-list(APPEND GODOT_MODULES_LIBRARIES_INTERNAL godot-module-gltf)
+add_subdirectory(gltf)
 
 ####################################
 #godot-module-gridmap
@@ -1144,9 +1090,8 @@ set(GODOT_MODULE_GRIDMAP_SOURCE
 	${GODOT_MODULE_GRIDMAP_DIR}/register_types.cpp
 	${GODOT_MODULE_GRIDMAP_DIR}/register_types.h
 	)
-add_library(godot-module-gridmap STATIC ${GODOT_MODULE_GRIDMAP_SOURCE})
-target_link_libraries(godot-module-gridmap PUBLIC godot-object)
-list(APPEND GODOT_MODULES_LIBRARIES_INTERNAL godot-module-gridmap)
+godot_add_library(godot-module-gridmap modules STATIC ${GODOT_MODULE_GRIDMAP_SOURCE})
+target_link_libraries(godot-module-gridmap PUBLIC godot-object minizip)
 
 ####################################
 #godot-module-hdr
@@ -1158,9 +1103,8 @@ set(GODOT_MODULE_HDR_SOURCE
 	${GODOT_MODULE_HDR_DIR}/register_types.cpp
 	${GODOT_MODULE_HDR_DIR}/register_types.h
 	)
-add_library(godot-module-hdr STATIC ${GODOT_MODULE_HDR_SOURCE})
+godot_add_library(godot-module-hdr modules STATIC ${GODOT_MODULE_HDR_SOURCE})
 target_link_libraries(godot-module-hdr PUBLIC godot-object)
-list(APPEND GODOT_MODULES_LIBRARIES_INTERNAL godot-module-hdr)
 
 ####################################
 #godot-module-jpg
@@ -1172,9 +1116,8 @@ set(GODOT_MODULE_JPG_SOURCE
 	${GODOT_MODULE_JPG_DIR}/register_types.cpp
 	${GODOT_MODULE_JPG_DIR}/register_types.h
 	)
-add_library(godot-module-jpg STATIC ${GODOT_MODULE_JPG_SOURCE})
+godot_add_library(godot-module-jpg modules STATIC ${GODOT_MODULE_JPG_SOURCE})
 target_link_libraries(godot-module-jpg PUBLIC godot-object jpeg-compressor)
-list(APPEND GODOT_MODULES_LIBRARIES_INTERNAL godot-module-jpg)
 
 ####################################
 #godot-module-jsonrpc
@@ -1186,9 +1129,8 @@ set(GODOT_MODULE_JSON_RPC_SOURCE
 	${GODOT_MODULE_JSON_RPC_DIR}/register_types.cpp
 	${GODOT_MODULE_JSON_RPC_DIR}/register_types.h
 	)
-add_library(godot-module-jsonrpc STATIC ${GODOT_MODULE_JSON_RPC_SOURCE})
+godot_add_library(godot-module-jsonrpc modules STATIC ${GODOT_MODULE_JSON_RPC_SOURCE})
 target_link_libraries(godot-module-jsonrpc PUBLIC godot-object)
-list(APPEND GODOT_MODULES_LIBRARIES_INTERNAL godot-module-jsonrpc)
 
 ####################################
 #godot-module-lightmapper-rd
@@ -1201,16 +1143,23 @@ set(GODOT_MODULE_LIGHTMAPPER_RD_SOURCE
 	${GODOT_MODULE_LIGHTMAPPER_RD_DIR}/register_types.h
 	)
 
-set(GODOT_MODULE_LIGHTMAPPER_RD_SHADRERS
+set(GODOT_MODULE_LIGHTMAPPER_RD_SHADERS
 	${GODOT_MODULE_LIGHTMAPPER_RD_DIR}/lm_blendseams.glsl
 	${GODOT_MODULE_LIGHTMAPPER_RD_DIR}/lm_common_inc.glsl
 	${GODOT_MODULE_LIGHTMAPPER_RD_DIR}/lm_compute.glsl
 	${GODOT_MODULE_LIGHTMAPPER_RD_DIR}/lm_raster.glsl
 	)
-add_library(godot-module-lightmapper-rd STATIC ${GODOT_MODULE_LIGHTMAPPER_RD_SOURCE})
+
+#Generate output filenames for GLSL shaders
+set(LIGHTMAPPER_GENERATED_OUTPUT_DIR ${CMAKE_BINARY_INCLUDE_DIR}/modules/lightmapper_rd)
+string(REPLACE ${GODOT_MODULE_LIGHTMAPPER_RD_DIR} ${LIGHTMAPPER_GENERATED_OUTPUT_DIR} GODOT_MODULE_LIGHTMAPPER_RD_SHADERS_GENERATED "${GODOT_MODULE_LIGHTMAPPER_RD_SHADERS}")
+string(REPLACE "glsl" "glsl.gen.h" GODOT_MODULE_LIGHTMAPPER_RD_SHADERS_GENERATED "${GODOT_MODULE_LIGHTMAPPER_RD_SHADERS_GENERATED}")
+GENERATE_SHADER_SOURCES(glsl_raw "${GODOT_MODULE_LIGHTMAPPER_RD_SHADERS}" "${GODOT_MODULE_LIGHTMAPPER_RD_SHADERS_GENERATED}")
+
+#Apply them to the library
+godot_add_library(godot-module-lightmapper-rd modules STATIC ${GODOT_MODULE_LIGHTMAPPER_RD_SOURCE} ${GODOT_MODULE_LIGHTMAPPER_RD_SHADERS_GENERATED})
 target_link_libraries(godot-module-lightmapper-rd PUBLIC godot-object)
-target_include_directories(godot-module-lightmapper-rd PRIVATE ${GODOT_FAKEGEN_ROOT_DIR}/modules/lightmapper_rd)
-list(APPEND GODOT_MODULES_LIBRARIES_INTERNAL godot-module-lightmapper-rd)
+target_include_directories(godot-module-lightmapper-rd PRIVATE ${LIGHTMAPPER_GENERATED_OUTPUT_DIR})
 
 ####################################
 #godot-module-mbedtls
@@ -1232,9 +1181,8 @@ set(GODOT_MODULE_MBEDTLS_SOURCE
 	${GODOT_MODULE_MBEDTLS_DIR}/tls_context_mbedtls.cpp
 	${GODOT_MODULE_MBEDTLS_DIR}/tls_context_mbedtls.h
 	)
-add_library(godot-module-mbedtls STATIC ${GODOT_MODULE_MBEDTLS_SOURCE})
-target_link_libraries(godot-module-mbedtls PUBLIC godot-object mbedtls)
-list(APPEND GODOT_MODULES_LIBRARIES_INTERNAL godot-module-mbedtls)
+godot_add_library(godot-module-mbedtls modules STATIC ${GODOT_MODULE_MBEDTLS_SOURCE})
+target_link_libraries(godot-module-mbedtls PUBLIC godot-object mbedtls godot-io)
 
 ####################################
 #godot-module-meshoptimizer
@@ -1244,9 +1192,8 @@ set(GODOT_MODULE_MESHOPTIMIZER_SOURCE
 	${GODOT_MODULE_MESHOPTIMIZER_DIR}/register_types.cpp
 	${GODOT_MODULE_MESHOPTIMIZER_DIR}/register_types.h
 	)
-add_library(godot-module-meshoptimizer STATIC ${GODOT_MODULE_MESHOPTIMIZER_SOURCE})
+godot_add_library(godot-module-meshoptimizer modules STATIC ${GODOT_MODULE_MESHOPTIMIZER_SOURCE})
 target_link_libraries(godot-module-meshoptimizer PUBLIC godot-object meshoptimizer)
-list(APPEND GODOT_MODULES_LIBRARIES_INTERNAL godot-module-meshoptimizer)
 
 ####################################
 #godot-module-minimp3
@@ -1260,9 +1207,8 @@ set(GODOT_MODULE_MINIMP3_SOURCE
 	${GODOT_MODULE_MINIMP3_DIR}/resource_importer_mp3.cpp
 	${GODOT_MODULE_MINIMP3_DIR}/resource_importer_mp3.h
 	)
-add_library(godot-module-minimp3 STATIC ${GODOT_MODULE_MINIMP3_SOURCE})
+godot_add_library(godot-module-minimp3 modules STATIC ${GODOT_MODULE_MINIMP3_SOURCE})
 target_link_libraries(godot-module-minimp3 PUBLIC godot-object minimp3)
-list(APPEND GODOT_MODULES_LIBRARIES_INTERNAL godot-module-minimp3)
 
 ####################################
 #godot-module-mobile_vr
@@ -1274,9 +1220,8 @@ set(GODOT_MODULE_MOBILE_VR_SOURCE
 	${GODOT_MODULE_MOBILE_VR_DIR}/register_types.cpp
 	${GODOT_MODULE_MOBILE_VR_DIR}/register_types.h
 	)
-add_library(godot-module-mobile-vr STATIC ${GODOT_MODULE_MOBILE_VR_SOURCE})
+godot_add_library(godot-module-mobile-vr modules STATIC ${GODOT_MODULE_MOBILE_VR_SOURCE})
 target_link_libraries(godot-module-mobile-vr PUBLIC godot-object)
-list(APPEND GODOT_MODULES_LIBRARIES_INTERNAL godot-module-mobile-vr)
 
 ####################################
 #godot-module-mono *BROKEN*
@@ -1566,9 +1511,9 @@ set(GODOT_MODULE_MONO_GODOTSHARP_SOURCE
 	${GODOT_MODULE_MONO_DIR}/glue/GodotSharp/GodotSharp.sln
 )
 
-add_library(godot-module-mono STATIC ${GODOT_MODULE_MONO_SOURCE})
+godot_add_library(godot-module-mono modules STATIC ${GODOT_MODULE_MONO_SOURCE})
 target_link_libraries(godot-module-mono PUBLIC godot-string godot-io godot-os godot-object)
-list(APPEND GODOT_MODULES_LIBRARIES_INTERNAL godot-module-mono)
+set_property(TARGET godot-module-mono PROPERTY CXX_STANDARD 17)
 
 ####################################
 #godot-module-msdfgen
@@ -1578,9 +1523,8 @@ set(GODOT_MODULE_MSDFGEN_SOURCE
 	${GODOT_MODULE_MSDFGEN_DIR}/register_types.cpp
 	${GODOT_MODULE_MSDFGEN_DIR}/register_types.h
 	)
-add_library(godot-module-msdfgen STATIC ${GODOT_MODULE_MSDFGEN_SOURCE})
+godot_add_library(godot-module-msdfgen modules STATIC ${GODOT_MODULE_MSDFGEN_SOURCE})
 target_link_libraries(godot-module-msdfgen PUBLIC godot-object msdfgen)
-list(APPEND GODOT_MODULES_LIBRARIES_INTERNAL godot-module-msdfgen)
 
 ####################################
 #godot-module-multiplayer
@@ -1612,9 +1556,8 @@ set(GODOT_MODULE_MULTIPLAYER_SOURCE
 	${GODOT_MODULE_MULTIPLAYER_DIR}/scene_rpc_interface.cpp
 	${GODOT_MODULE_MULTIPLAYER_DIR}/scene_rpc_interface.h
 	)
-add_library(godot-module-multiplayer STATIC ${GODOT_MODULE_MULTIPLAYER_SOURCE})
-target_link_libraries(godot-module-multiplayer PUBLIC godot-object)
-list(APPEND GODOT_MODULES_LIBRARIES_INTERNAL godot-module-multiplayer)
+godot_add_library(godot-module-multiplayer modules STATIC ${GODOT_MODULE_MULTIPLAYER_SOURCE})
+target_link_libraries(godot-module-multiplayer PUBLIC godot-object zlib)
 
 ####################################
 #godot-module-navigation
@@ -1641,9 +1584,8 @@ set(GODOT_MODULE_NAVIGATION_SOURCE
 	${GODOT_MODULE_NAVIGATION_DIR}/register_types.cpp
 	${GODOT_MODULE_NAVIGATION_DIR}/register_types.h
 )
-add_library(godot-module-navigation STATIC ${GODOT_MODULE_NAVIGATION_SOURCE})
-target_link_libraries(godot-module-navigation PUBLIC godot-object rvo2 recast-navigation)
-list(APPEND GODOT_MODULES_LIBRARIES_INTERNAL godot-module-navigation)
+godot_add_library(godot-module-navigation modules STATIC ${GODOT_MODULE_NAVIGATION_SOURCE})
+target_link_libraries(godot-module-navigation PUBLIC godot-object rvo2 recast-navigation zlib)
 
 ####################################
 #godot-module-noise
@@ -1664,9 +1606,8 @@ set(GODOT_MODULE_NOISE_SOURCE
 	${GODOT_MODULE_NOISE_DIR}/tests/test_fastnoise_lite.h
 	${GODOT_MODULE_NOISE_DIR}/tests/test_noise_texture_2d.h
 	)
-add_library(godot-module-noise STATIC ${GODOT_MODULE_NOISE_SOURCE})
+godot_add_library(godot-module-noise modules STATIC ${GODOT_MODULE_NOISE_SOURCE})
 target_link_libraries(godot-module-noise PUBLIC godot-object)
-list(APPEND GODOT_MODULES_LIBRARIES_INTERNAL godot-module-noise)
 
 ####################################
 #godot-module-ogg
@@ -1678,92 +1619,13 @@ set(GODOT_MODULE_OGG_SOURCE
 	${GODOT_MODULE_OGG_DIR}/register_types.cpp
 	${GODOT_MODULE_OGG_DIR}/register_types.h
 	)
-add_library(godot-module-ogg STATIC ${GODOT_MODULE_OGG_SOURCE})
+godot_add_library(godot-module-ogg modules STATIC ${GODOT_MODULE_OGG_SOURCE})
 target_link_libraries(godot-module-ogg PUBLIC godot-object ogg)
-list(APPEND GODOT_MODULES_LIBRARIES_INTERNAL godot-module-ogg)
 
 ####################################
 #godot-module-openxr
 ####################################
-set(GODOT_MODULE_OPENXR_DIR ${GODOT_MODULES_BASE_DIR}/openxr)
-set(GODOT_MODULE_OPENXR_SOURCE
-	${GODOT_MODULE_OPENXR_DIR}/action_map/openxr_action_set.cpp
-	${GODOT_MODULE_OPENXR_DIR}/action_map/openxr_action.cpp
-	${GODOT_MODULE_OPENXR_DIR}/action_map/openxr_interaction_profile.h
-	${GODOT_MODULE_OPENXR_DIR}/action_map/openxr_action_set.h
-	${GODOT_MODULE_OPENXR_DIR}/action_map/openxr_interaction_profile.cpp
-	${GODOT_MODULE_OPENXR_DIR}/action_map/openxr_interaction_profile_meta_data.cpp
-	${GODOT_MODULE_OPENXR_DIR}/action_map/openxr_action.h
-	${GODOT_MODULE_OPENXR_DIR}/action_map/openxr_interaction_profile_meta_data.h
-	${GODOT_MODULE_OPENXR_DIR}/action_map/openxr_action_map.h
-	${GODOT_MODULE_OPENXR_DIR}/action_map/openxr_action_map.cpp
-	# ${GODOT_MODULE_OPENXR_DIR}/doc_classes/OpenXRInteractionProfile.xml
-	# ${GODOT_MODULE_OPENXR_DIR}/doc_classes/OpenXRHand.xml
-	# ${GODOT_MODULE_OPENXR_DIR}/doc_classes/OpenXRInterface.xml
-	# ${GODOT_MODULE_OPENXR_DIR}/doc_classes/OpenXRAction.xml
-	# ${GODOT_MODULE_OPENXR_DIR}/doc_classes/OpenXRIPBinding.xml
-	# ${GODOT_MODULE_OPENXR_DIR}/doc_classes/OpenXRActionSet.xml
-	# ${GODOT_MODULE_OPENXR_DIR}/doc_classes/OpenXRActionMap.xml
-	${GODOT_MODULE_OPENXR_DIR}/editor/openxr_action_map_editor.h
-	${GODOT_MODULE_OPENXR_DIR}/editor/openxr_select_action_dialog.cpp
-	${GODOT_MODULE_OPENXR_DIR}/editor/openxr_action_editor.cpp
-	${GODOT_MODULE_OPENXR_DIR}/editor/openxr_interaction_profile_editor.cpp
-	${GODOT_MODULE_OPENXR_DIR}/editor/openxr_select_action_dialog.h
-	${GODOT_MODULE_OPENXR_DIR}/editor/openxr_select_interaction_profile_dialog.h
-	${GODOT_MODULE_OPENXR_DIR}/editor/openxr_action_set_editor.cpp
-	${GODOT_MODULE_OPENXR_DIR}/editor/openxr_editor_plugin.cpp
-	${GODOT_MODULE_OPENXR_DIR}/editor/openxr_select_interaction_profile_dialog.cpp
-	${GODOT_MODULE_OPENXR_DIR}/editor/openxr_action_editor.h
-	${GODOT_MODULE_OPENXR_DIR}/editor/openxr_interaction_profile_editor.h
-	${GODOT_MODULE_OPENXR_DIR}/editor/openxr_editor_plugin.h
-	${GODOT_MODULE_OPENXR_DIR}/editor/openxr_action_set_editor.h
-	${GODOT_MODULE_OPENXR_DIR}/editor/openxr_action_map_editor.cpp
-	${GODOT_MODULE_OPENXR_DIR}/extensions/openxr_vulkan_extension.cpp
-	${GODOT_MODULE_OPENXR_DIR}/extensions/openxr_ml2_controller_extension.cpp
-	${GODOT_MODULE_OPENXR_DIR}/extensions/openxr_htc_vive_tracker_extension.cpp
-	${GODOT_MODULE_OPENXR_DIR}/extensions/openxr_vulkan_extension.h
-	${GODOT_MODULE_OPENXR_DIR}/extensions/openxr_composition_layer_depth_extension.h
-	${GODOT_MODULE_OPENXR_DIR}/extensions/openxr_opengl_extension.h
-	${GODOT_MODULE_OPENXR_DIR}/extensions/openxr_pico_controller_extension.cpp
-	#${GODOT_MODULE_OPENXR_DIR}/extensions/openxr_android_extension.cpp
-	${GODOT_MODULE_OPENXR_DIR}/extensions/openxr_composition_layer_provider.h
-	${GODOT_MODULE_OPENXR_DIR}/extensions/openxr_wmr_controller_extension.cpp
-	${GODOT_MODULE_OPENXR_DIR}/extensions/openxr_huawei_controller_extension.cpp
-	${GODOT_MODULE_OPENXR_DIR}/extensions/openxr_composition_layer_depth_extension.cpp
-	${GODOT_MODULE_OPENXR_DIR}/extensions/openxr_fb_display_refresh_rate_extension.cpp
-	${GODOT_MODULE_OPENXR_DIR}/extensions/openxr_palm_pose_extension.h
-	${GODOT_MODULE_OPENXR_DIR}/extensions/openxr_extension_wrapper.h
-	${GODOT_MODULE_OPENXR_DIR}/extensions/openxr_android_extension.h
-	${GODOT_MODULE_OPENXR_DIR}/extensions/openxr_wmr_controller_extension.h
-	${GODOT_MODULE_OPENXR_DIR}/extensions/openxr_htc_controller_extension.h
-	${GODOT_MODULE_OPENXR_DIR}/extensions/openxr_pico_controller_extension.h
-	${GODOT_MODULE_OPENXR_DIR}/extensions/openxr_hand_tracking_extension.cpp
-	${GODOT_MODULE_OPENXR_DIR}/extensions/openxr_palm_pose_extension.cpp
-	${GODOT_MODULE_OPENXR_DIR}/extensions/openxr_opengl_extension.cpp
-	${GODOT_MODULE_OPENXR_DIR}/extensions/openxr_htc_vive_tracker_extension.h
-	${GODOT_MODULE_OPENXR_DIR}/extensions/openxr_fb_passthrough_extension_wrapper.cpp
-	${GODOT_MODULE_OPENXR_DIR}/extensions/openxr_fb_display_refresh_rate_extension.h
-	${GODOT_MODULE_OPENXR_DIR}/extensions/openxr_ml2_controller_extension.h
-	${GODOT_MODULE_OPENXR_DIR}/extensions/openxr_htc_controller_extension.cpp
-	${GODOT_MODULE_OPENXR_DIR}/extensions/openxr_fb_passthrough_extension_wrapper.h
-	${GODOT_MODULE_OPENXR_DIR}/extensions/openxr_huawei_controller_extension.h
-	${GODOT_MODULE_OPENXR_DIR}/extensions/openxr_hand_tracking_extension.h
-	${GODOT_MODULE_OPENXR_DIR}/openxr_api.cpp
-	${GODOT_MODULE_OPENXR_DIR}/openxr_api.h
-	${GODOT_MODULE_OPENXR_DIR}/openxr_interface.cpp
-	${GODOT_MODULE_OPENXR_DIR}/openxr_interface.h
-	${GODOT_MODULE_OPENXR_DIR}/openxr_util.cpp
-	${GODOT_MODULE_OPENXR_DIR}/openxr_util.h
-	${GODOT_MODULE_OPENXR_DIR}/register_types.cpp
-	${GODOT_MODULE_OPENXR_DIR}/register_types.h
-	${GODOT_MODULE_OPENXR_DIR}/scene/openxr_hand.h
-	${GODOT_MODULE_OPENXR_DIR}/scene/openxr_hand.cpp
-	${GODOT_MODULE_OPENXR_DIR}/util.h
-	)
-add_library(godot-module-openxr STATIC ${GODOT_MODULE_OPENXR_SOURCE})
-target_link_libraries(godot-module-openxr PUBLIC godot-object openxr)
-target_compile_definitions(godot-module-openxr PUBLIC XR_USE_GRAPHICS_API_VULKAN=1)
-list(APPEND GODOT_MODULES_LIBRARIES_INTERNAL godot-module-openxr)
+add_subdirectory(openxr)
 
 ####################################
 #godot-module-raycast
@@ -1779,9 +1641,8 @@ set(GODOT_MODULE_RAYCAST_SOURCE
 	${GODOT_MODULE_RAYCAST_DIR}/static_raycaster_embree.cpp
 	${GODOT_MODULE_RAYCAST_DIR}/static_raycaster_embree.h
 	)
-add_library(godot-module-raycast STATIC ${GODOT_MODULE_RAYCAST_SOURCE})
+godot_add_library(godot-module-raycast modules STATIC ${GODOT_MODULE_RAYCAST_SOURCE})
 target_link_libraries(godot-module-raycast PUBLIC godot-object embree)
-list(APPEND GODOT_MODULES_LIBRARIES_INTERNAL godot-module-raycast)
 
 ####################################
 #godot-module-regex
@@ -1794,9 +1655,8 @@ set(GODOT_MODULE_REGEX_SOURCE
 	${GODOT_MODULE_REGEX_DIR}/register_types.h
 	${GODOT_MODULE_REGEX_DIR}/tests/test_regex.h
 	)
-add_library(godot-module-regex STATIC ${GODOT_MODULE_REGEX_SOURCE})
+godot_add_library(godot-module-regex modules STATIC ${GODOT_MODULE_REGEX_SOURCE})
 target_link_libraries(godot-module-regex PUBLIC godot-object pcre2)
-list(APPEND GODOT_MODULES_LIBRARIES_INTERNAL godot-module-regex)
 
 ####################################
 #godot-module-squish
@@ -1808,9 +1668,8 @@ set(GODOT_MODULE_SQUISH_SOURCE
 	${GODOT_MODULE_SQUISH_DIR}/register_types.cpp
 	${GODOT_MODULE_SQUISH_DIR}/register_types.h
 	)
-add_library(godot-module-squish STATIC ${GODOT_MODULE_SQUISH_SOURCE})
+godot_add_library(godot-module-squish modules STATIC ${GODOT_MODULE_SQUISH_SOURCE})
 target_link_libraries(godot-module-squish PUBLIC godot-object squish)
-list(APPEND GODOT_MODULES_LIBRARIES_INTERNAL godot-module-squish)
 
 ####################################
 #godot-module-svg
@@ -1822,32 +1681,13 @@ set(GODOT_MODULE_SVG_SOURCE
 	${GODOT_MODULE_SVG_DIR}/register_types.cpp
 	${GODOT_MODULE_SVG_DIR}/register_types.h
 	)
-add_library(godot-module-svg STATIC ${GODOT_MODULE_SVG_SOURCE})
+godot_add_library(godot-module-svg modules STATIC ${GODOT_MODULE_SVG_SOURCE})
 target_link_libraries(godot-module-svg PUBLIC godot-object thorvg)
-list(APPEND GODOT_MODULES_LIBRARIES_INTERNAL godot-module-svg)
 
 ####################################
 #godot-module-text-server-adv
 ####################################
-set(GODOT_MODULE_TEXT_SERVER_ADV_DIR ${GODOT_MODULES_BASE_DIR}/text_server_adv)
-set(GODOT_MODULE_TEXT_SERVER_ADV_SOURCE
-	#Compiled into icu directly
-	#${GODOT_MODULE_TEXT_SERVER_ADV_DIR}/icu_data/icudata_stub.cpp
-	${GODOT_MODULE_TEXT_SERVER_ADV_DIR}/register_types.cpp
-	${GODOT_MODULE_TEXT_SERVER_ADV_DIR}/register_types.h
-	${GODOT_MODULE_TEXT_SERVER_ADV_DIR}/script_iterator.cpp
-	${GODOT_MODULE_TEXT_SERVER_ADV_DIR}/script_iterator.h
-	${GODOT_MODULE_TEXT_SERVER_ADV_DIR}/text_server_adv.cpp
-	${GODOT_MODULE_TEXT_SERVER_ADV_DIR}/text_server_adv.h
-	${GODOT_MODULE_TEXT_SERVER_ADV_DIR}/thorvg_bounds_iterator.cpp
-	${GODOT_MODULE_TEXT_SERVER_ADV_DIR}/thorvg_bounds_iterator.h
-	${GODOT_MODULE_TEXT_SERVER_ADV_DIR}/thorvg_svg_in_ot.cpp
-	${GODOT_MODULE_TEXT_SERVER_ADV_DIR}/thorvg_svg_in_ot.h
-	)
-add_library(godot-module-text-server-adv STATIC ${GODOT_MODULE_TEXT_SERVER_ADV_SOURCE})
-target_link_libraries(godot-module-text-server-adv PUBLIC godot-object thorvg harfbuzz freetype msdfgen icu4c)
-#target_compile_definitions(godot-module-text-server-adv)
-list(APPEND GODOT_MODULES_LIBRARIES_INTERNAL godot-module-text-server-adv)
+add_subdirectory(text-server-adv)
 
 ####################################
 #godot-module-text-server-fb
@@ -1863,9 +1703,8 @@ set(GODOT_MODULE_TEXT_SERVER_FB_SOURCE
 	${GODOT_MODULE_TEXT_SERVER_FB_DIR}/thorvg_svg_in_ot.cpp
 	${GODOT_MODULE_TEXT_SERVER_FB_DIR}/thorvg_svg_in_ot.h
 )
-add_library(godot-module-text-server-fb STATIC ${GODOT_MODULE_TEXT_SERVER_FB_SOURCE})
+godot_add_library(godot-module-text-server-fb modules STATIC ${GODOT_MODULE_TEXT_SERVER_FB_SOURCE})
 target_link_libraries(godot-module-text-server-fb PUBLIC godot-object thorvg freetype msdfgen)
-list(APPEND GODOT_MODULES_LIBRARIES_INTERNAL godot-module-text-server-fb)
 
 ####################################
 #godot-module-tga
@@ -1877,9 +1716,8 @@ set(GODOT_MODULE_TGA_SOURCE
 	${GODOT_MODULE_TGA_DIR}/register_types.cpp
 	${GODOT_MODULE_TGA_DIR}/register_types.h
 )
-add_library(godot-module-tga STATIC ${GODOT_MODULE_TGA_SOURCE})
+godot_add_library(godot-module-tga modules STATIC ${GODOT_MODULE_TGA_SOURCE})
 target_link_libraries(godot-module-tga PUBLIC godot-object)
-list(APPEND GODOT_MODULES_LIBRARIES_INTERNAL godot-module-tga)
 
 ####################################
 #godot-module-theora
@@ -1891,9 +1729,8 @@ set(GODOT_MODULE_THEORA_SOURCE
 	${GODOT_MODULE_THEORA_DIR}/video_stream_theora.cpp
 	${GODOT_MODULE_THEORA_DIR}/video_stream_theora.h
 	)
-add_library(godot-module-theora STATIC ${GODOT_MODULE_THEORA_SOURCE})
+godot_add_library(godot-module-theora modules STATIC ${GODOT_MODULE_THEORA_SOURCE})
 target_link_libraries(godot-module-theora PUBLIC godot-object theora vorbis)
-list(APPEND GODOT_MODULES_LIBRARIES_INTERNAL godot-module-theora)
 
 ####################################
 #godot-module-tinyexr
@@ -1907,9 +1744,8 @@ set(GODOT_MODULE_TINYEXR_SOURCE
 	${GODOT_MODULE_TINYEXR_DIR}/register_types.cpp
 	${GODOT_MODULE_TINYEXR_DIR}/register_types.h
 	)
-add_library(godot-module-tinyexr STATIC ${GODOT_MODULE_TINYEXR_SOURCE})
-target_link_libraries(godot-module-tinyexr PUBLIC godot-object tinyexr)
-list(APPEND GODOT_MODULES_LIBRARIES_INTERNAL godot-module-tinyexr)
+godot_add_library(godot-module-tinyexr modules STATIC ${GODOT_MODULE_TINYEXR_SOURCE})
+target_link_libraries(godot-module-tinyexr PUBLIC godot-object tinyexr zlib)
 
 ####################################
 #godot-module-upnp
@@ -1923,9 +1759,8 @@ set(GODOT_MODULE_UPNP_SOURCE
 	${GODOT_MODULE_UPNP_DIR}/upnp_device.h
 	${GODOT_MODULE_UPNP_DIR}/upnp.h
 	)
-add_library(godot-module-upnp STATIC ${GODOT_MODULE_UPNP_SOURCE})
+godot_add_library(godot-module-upnp modules STATIC ${GODOT_MODULE_UPNP_SOURCE})
 target_link_libraries(godot-module-upnp PUBLIC godot-object miniupnpc)
-list(APPEND GODOT_MODULES_LIBRARIES_INTERNAL godot-module-upnp)
 
 ####################################
 #godot-module-vhacd
@@ -1935,9 +1770,8 @@ set(GODOT_MODULE_VHACD_SOURCE
 	${GODOT_MODULE_VHACD_DIR}/register_types.cpp
 	${GODOT_MODULE_VHACD_DIR}/register_types.h
 	)
-add_library(godot-module-vhacd STATIC ${GODOT_MODULE_VHACD_SOURCE})
+godot_add_library(godot-module-vhacd modules STATIC ${GODOT_MODULE_VHACD_SOURCE})
 target_link_libraries(godot-module-vhacd PUBLIC godot-object vhacd)
-list(APPEND GODOT_MODULES_LIBRARIES_INTERNAL godot-module-vhacd)
 
 ####################################
 #godot-module-vorbis
@@ -1951,9 +1785,8 @@ set(GODOT_MODULE_VORBIS_SOURCE
 	${GODOT_MODULE_VORBIS_DIR}/resource_importer_ogg_vorbis.cpp
 	${GODOT_MODULE_VORBIS_DIR}/resource_importer_ogg_vorbis.h
 	)
-add_library(godot-module-vorbis STATIC ${GODOT_MODULE_VORBIS_SOURCE})
+godot_add_library(godot-module-vorbis modules STATIC ${GODOT_MODULE_VORBIS_SOURCE})
 target_link_libraries(godot-module-vorbis PUBLIC godot-object vorbis)
-list(APPEND GODOT_MODULES_LIBRARIES_INTERNAL godot-module-vorbis)
 
 ####################################
 #godot-module-webp
@@ -1969,9 +1802,8 @@ set(GODOT_MODULE_WEBP_SOURCE
 	${GODOT_MODULE_WEBP_DIR}/webp_common.cpp
 	${GODOT_MODULE_WEBP_DIR}/webp_common.h
 	)
-add_library(godot-module-webp STATIC ${GODOT_MODULE_WEBP_SOURCE})
+godot_add_library(godot-module-webp modules STATIC ${GODOT_MODULE_WEBP_SOURCE})
 target_link_libraries(godot-module-webp PUBLIC godot-object webp)
-list(APPEND GODOT_MODULES_LIBRARIES_INTERNAL godot-module-webp)
 
 ####################################
 #godot-module-webrtc
@@ -1995,9 +1827,8 @@ set(GODOT_MODULE_WEBRTC_SOURCE
 	${GODOT_MODULE_WEBRTC_DIR}/webrtc_peer_connection_js.cpp
 	${GODOT_MODULE_WEBRTC_DIR}/webrtc_peer_connection_js.h
 	)
-add_library(godot-module-webrtc STATIC ${GODOT_MODULE_WEBRTC_SOURCE})
+godot_add_library(godot-module-webrtc modules STATIC ${GODOT_MODULE_WEBRTC_SOURCE})
 target_link_libraries(godot-module-webrtc PUBLIC godot-object)
-list(APPEND GODOT_MODULES_LIBRARIES_INTERNAL godot-module-webrtc)
 
 ####################################
 #godot-module-websocket
@@ -2020,9 +1851,9 @@ set(GODOT_MODULE_WEBSOCKET_SOURCE
 	${GODOT_MODULE_WEBSOCKET_DIR}/wsl_peer.cpp
 	${GODOT_MODULE_WEBSOCKET_DIR}/wsl_peer.h
 	)
-add_library(godot-module-websocket STATIC ${GODOT_MODULE_WEBSOCKET_SOURCE})
-target_link_libraries(godot-module-websocket PUBLIC godot-object wslay)
-list(APPEND GODOT_MODULES_LIBRARIES_INTERNAL godot-module-websocket)
+godot_add_library(godot-module-websocket modules STATIC ${GODOT_MODULE_WEBSOCKET_SOURCE})
+target_link_libraries(godot-module-websocket PUBLIC godot-object wslay zlib)
+set_property(TARGET godot-module-websocket PROPERTY CXX_STANDARD 17)
 
 ####################################
 #godot-module-webxr
@@ -2037,9 +1868,8 @@ set(GODOT_MODULE_WEBXR_SOURCE
 	${GODOT_MODULE_WEBXR_DIR}/webxr_interface_js.cpp
 	${GODOT_MODULE_WEBXR_DIR}/webxr_interface_js.h
 	)
-add_library(godot-module-webxr STATIC ${GODOT_MODULE_WEBXR_SOURCE})
+godot_add_library(godot-module-webxr modules STATIC ${GODOT_MODULE_WEBXR_SOURCE})
 target_link_libraries(godot-module-webxr PUBLIC godot-object)
-list(APPEND GODOT_MODULES_LIBRARIES_INTERNAL godot-module-webxr)
 
 ####################################
 #godot-module-xatlas-unwrap
@@ -2049,9 +1879,8 @@ set(GODOT_MODULE_XATLAS_UNWRAP_SOURCE
 	${GODOT_MODULE_XATLAS_UNWRAP_DIR}/register_types.cpp
 	${GODOT_MODULE_XATLAS_UNWRAP_DIR}/register_types.h
 	)
-add_library(godot-module-xatlas-unwrap STATIC ${GODOT_MODULE_XATLAS_UNWRAP_SOURCE})
-target_link_libraries(godot-module-xatlas-unwrap PUBLIC godot-object)
-list(APPEND GODOT_MODULES_LIBRARIES_INTERNAL godot-module-xatlas-unwrap)
+godot_add_library(godot-module-xatlas-unwrap modules STATIC ${GODOT_MODULE_XATLAS_UNWRAP_SOURCE})
+target_link_libraries(godot-module-xatlas-unwrap PUBLIC godot-object xatlas)
 
 ####################################
 #godot-module-zip
@@ -2065,7 +1894,5 @@ set(GODOT_MODULE_ZIP_SOURCE
 	${GODOT_MODULE_ZIP_DIR}/zip_reader.cpp
 	${GODOT_MODULE_ZIP_DIR}/zip_reader.h
 	)
-add_library(godot-module-zip STATIC ${GODOT_MODULE_ZIP_SOURCE})
+godot_add_library(godot-module-zip modules STATIC ${GODOT_MODULE_ZIP_SOURCE})
 target_link_libraries(godot-module-zip PUBLIC godot-object godot-io minizip)
-list(APPEND GODOT_MODULES_LIBRARIES_INTERNAL godot-module-zip)
-set(GODOT_MODULE_LIBRARIES ${GODOT_MODULES_LIBRARIES_INTERNAL} PARENT_SCOPE)

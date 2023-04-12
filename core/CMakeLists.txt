@@ -5,9 +5,7 @@ cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
 
 set(GODOT_CORE_BASE_DIR ${GODOT_ENGINE_ROOT_DIRECTORY}/core)
 set(GODOT_SOURCE_ROOT_PLATFORM_DIR ${GODOT_ENGINE_ROOT_DIRECTORY}/platform)
-
-#This variable holds all the targets of this subdirectory
-set(GODOT_CORE_LIBRARIES_INTERNAL)
+set(GODOT_SOURCE_ROOT_THIRDPARTY_DIR ${GODOT_ENGINE_ROOT_DIRECTORY}/thirdparty)
 
 ####################################
 #object
@@ -37,13 +35,56 @@ set(GODOT_CORE_OBJECT_SOURCE
     ${GODOT_CORE_OBJECT_DIR}/worker_thread_pool.cpp
     ${GODOT_CORE_OBJECT_DIR}/worker_thread_pool.h
     )
-add_library(godot-object STATIC ${GODOT_CORE_OBJECT_SOURCE})
-target_include_directories(godot-object PUBLIC ${GODOT_ENGINE_ROOT_DIRECTORY} ${GODOT_FAKEGEN_ROOT_DIR})
-#HACK - Because I am linux steal fakegen
-target_include_directories(godot-object PUBLIC ${GODOT_SOURCE_ROOT_PLATFORM_DIR}/linuxbsd)
+
+
+#Make the library
+set(GODOT_CONFIG_VERSION_HEADER_OUTPUT ${CMAKE_BINARY_INCLUDE_DIR}/core/version_generated.gen.h)
+set(GODOT_CONFIG_VERSION_HASH_OUTPUT ${CMAKE_BINARY_INCLUDE_DIR}/core/version_hash.gen.cpp)
+GENERATE_VERSION_INFORMATION(${GODOT_CONFIG_VERSION_HEADER_OUTPUT} ${GODOT_CONFIG_VERSION_HASH_OUTPUT})
+
+set(GODOT_INTERFACE_WRAPPERS_OUTPUT ${CMAKE_BINARY_INCLUDE_DIR}/core/extension/ext_wrappers.gen.inc)
+GENERATE_GODOT_EXTENSION_WRAPPERS(${GODOT_INTERFACE_WRAPPERS_OUTPUT})
+
+set(GODOT_INTERFACE_INTERFACE_DUMP_OUTPUT ${CMAKE_BINARY_INCLUDE_DIR}/core/extension/gdextension_interface_dump.gen.h)
+GENERATE_GODOT_SCRIPT_INTERFACE_DUMP("${GODOT_CORE_BASE_DIR}/extension/gdextension_interface.h" "${GODOT_INTERFACE_INTERFACE_DUMP_OUTPUT}")
+
+set(GODOT_OBJECT_GD_VIRTUALS_OUTPUT ${CMAKE_BINARY_INCLUDE_DIR}/core/object/gdvirtual.gen.inc)
+GENERATE_GODOT_GDSCRIPT_VIRTUALS(${GODOT_OBJECT_GD_VIRTUALS_OUTPUT})
+
+set(GODOT_CORE_OBJECT_DISABLED_CLASSES_OUTPUT ${CMAKE_BINARY_INCLUDE_DIR}/core/disabled_classes.gen.h)
+GENERATE_CORE_DISABLED_CLASSES("None" ${GODOT_CORE_OBJECT_DISABLED_CLASSES_OUTPUT})
+
+#Modules to enable
+set(GENERATED_MODULES_ENABLED_OUTPUT ${CMAKE_BINARY_INCLUDE_DIR}/modules/modules_enabled.gen.h)
+set(GENERATED_MODULES_REGISTER_OUTPUT ${CMAKE_BINARY_INCLUDE_DIR}/modules/register_module_types.gen.cpp)
+GENERATE_ENABLED_MODULES_AND_REGISTER("${GODOT_ENGINE_ROOT_DIRECTORY}/modules/" "${GODOT_CUSTOM_ENGINE_MODULES_DIRECTORY}" "${GENERATED_MODULES_ENABLED_OUTPUT}" "${GENERATED_MODULES_REGISTER_OUTPUT}")
+
+godot_add_library(godot-object core STATIC
+                         ${GODOT_CORE_OBJECT_SOURCE}
+                         ${GODOT_CORE_OBJECT_DISABLED_CLASSES_OUTPUT}
+                         ${GODOT_INTERFACE_INTERFACE_DUMP_OUTPUT}
+                         ${GODOT_INTERFACE_WRAPPERS_OUTPUT}
+                         ${GODOT_OBJECT_GD_VIRTUALS_OUTPUT}
+                         ${GODOT_CONFIG_VERSION_HEADER_OUTPUT}
+                         ${GODOT_CONFIG_VERSION_HASH_OUTPUT}
+                         ${GENERATED_MODULES_ENABLED_OUTPUT}
+                         ${GENERATED_MODULES_REGISTER_OUTPUT})
+target_include_directories(godot-object PUBLIC
+                                        ${GODOT_ENGINE_ROOT_DIRECTORY}
+                                        ${CMAKE_BINARY_INCLUDE_DIR})
+
+target_include_directories(godot-object PRIVATE 
+                                ${CMAKE_BINARY_INCLUDE_DIR}/modules
+                                ${GODOT_ENGINE_ROOT_DIRECTORY}/modules)
+
 target_compile_definitions(godot-object PUBLIC
-                                      DEBUG_ENABLED=1 MODULE_MONO_ENABLED=1 UNIX_ENABLED=1 GD_MONO_HOT_RELOAD=1 PULSEAUDIO_ENABLED=1 ALSAMIDI_ENABLED=1 VULKAN_ENABLED=1)
-list(APPEND GODOT_CORE_LIBRARIES_INTERNAL godot-object)
+                                      DEBUG_ENABLED=1 MODULE_MONO_ENABLED=1 GD_MONO_HOT_RELOAD=1)
+
+if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    target_include_directories(godot-object PUBLIC ${GODOT_SOURCE_ROOT_PLATFORM_DIR}/windows)
+else()
+    target_include_directories(godot-object PUBLIC ${GODOT_SOURCE_ROOT_PLATFORM_DIR}/linuxbsd)
+endif()
 
 ####################################
 #math
@@ -136,10 +177,9 @@ set(GODOT_CORE_MATH_SOURCE
     ${GODOT_CORE_MATH_DIR}/vector4i.h
     )
 
-add_library(godot-math STATIC ${GODOT_CORE_MATH_SOURCE})
+godot_add_library(godot-math core STATIC ${GODOT_CORE_MATH_SOURCE})
 target_include_directories(godot-math PUBLIC ${GODOT_ENGINE_ROOT_DIRECTORY})
 target_link_libraries(godot-math PUBLIC godot-object)
-list(APPEND GODOT_CORE_LIBRARIES_INTERNAL godot-math)
 
 ####################################
 #string
@@ -169,10 +209,9 @@ set(GODOT_CORE_STRING_SOURCE
     ${GODOT_CORE_STRING_DIR}/ustring.cpp
     ${GODOT_CORE_STRING_DIR}/ustring.h
     )
-add_library(godot-string STATIC ${GODOT_CORE_STRING_SOURCE})
+godot_add_library(godot-string core STATIC ${GODOT_CORE_STRING_SOURCE})
 target_include_directories(godot-string PUBLIC ${GODOT_ENGINE_ROOT_DIRECTORY})
 target_link_libraries(godot-string PUBLIC godot-object godot-thirdparty-misc)
-list(APPEND GODOT_CORE_LIBRARIES_INTERNAL godot-string)
 
 
 ####################################
@@ -185,9 +224,41 @@ set(GODOT_CORE_CONFIG_SOURCE
     ${GODOT_CORE_CONFIG_DIR}/project_settings.cpp
     ${GODOT_CORE_CONFIG_DIR}/project_settings.h
     )
-add_library(godot-config STATIC ${GODOT_CORE_CONFIG_SOURCE})
+
+#Generate the Authors+Donors file
+set(GODOT_CORE_AUTHORS_SOURCE ${GODOT_ENGINE_ROOT_DIRECTORY}/AUTHORS.md)
+set(GODOT_CORE_AUTHORS_SOURCE_OUTPUT ${CMAKE_BINARY_INCLUDE_DIR}/core/authors.gen.h)
+GENERATE_CORE_SOURCES(authors_header ${GODOT_CORE_AUTHORS_SOURCE} ${GODOT_CORE_AUTHORS_SOURCE_OUTPUT})
+
+set(GODOT_CORE_DONORS_SOURCE ${GODOT_ENGINE_ROOT_DIRECTORY}/DONORS.md)
+set(GODOT_CORE_DONORS_SOURCE_OUTPUT ${CMAKE_BINARY_INCLUDE_DIR}/core/donors.gen.h)
+GENERATE_CORE_SOURCES(donors_header ${GODOT_CORE_DONORS_SOURCE} ${GODOT_CORE_DONORS_SOURCE_OUTPUT})
+
+#Generate the license file
+set(GODOT_CORE_CONFIG_COPYRIGHT_SOURCE ${GODOT_ENGINE_ROOT_DIRECTORY}/COPYRIGHT.txt)
+set(GODOT_CORE_CONFIG_LICENSE_SOURCE ${GODOT_ENGINE_ROOT_DIRECTORY}/LICENSE.txt)
+set(GODOT_CORE_CONFIG_LICENSE_OUTPUT ${CMAKE_BINARY_INCLUDE_DIR}/core/license.gen.h)
+GENERATE_LICENSE_FILE(${GODOT_CORE_CONFIG_COPYRIGHT_SOURCE} ${GODOT_CORE_CONFIG_LICENSE_SOURCE} ${GODOT_CORE_CONFIG_LICENSE_OUTPUT})
+
+#Generate the script encryption
+set(GODOT_SCRIPT_ENCRYPTION_GENERATE_HEADER ${CMAKE_BINARY_INCLUDE_DIR}/core/script_encryption_key.gen.cpp)
+GENERATE_SCRIPT_ENCRYPTION_HEADER("" ${GODOT_SCRIPT_ENCRYPTION_GENERATE_HEADER})
+
+
+godot_add_library(godot-config core STATIC
+            ${GODOT_CORE_CONFIG_SOURCE}
+            ${GODOT_CORE_AUTHORS_SOURCE_OUTPUT}
+            ${GODOT_CORE_DONORS_SOURCE_OUTPUT}
+            ${GODOT_CORE_CONFIG_LICENSE_OUTPUT}
+            ${GODOT_SCRIPT_ENCRYPTION_GENERATE_HEADER})
+target_include_directories(godot-config PUBLIC ${CMAKE_BINARY_INCLUDE_DIR})
 target_link_libraries(godot-config PUBLIC godot-string godot-object)
-list(APPEND GODOT_CORE_LIBRARIES_INTERNAL godot-config)
+if(${WANT_OPENGL} AND ${OPENGL_FOUND})
+    target_compile_definitions(godot-config PUBLIC GLES3_ENABLED=1)
+endif()
+if(${WANT_VULKAN} AND ${VULKAN_FOUND})
+    target_compile_definitions(godot-config PUBLIC VULKAN_ENABLED=1)
+endif()
 
 ####################################
 #crypto
@@ -203,11 +274,9 @@ set(GODOT_CORE_CRYPTO_SOURCE
     ${GODOT_CORE_CRYPTO_DIR}/hashing_context.cpp
     ${GODOT_CORE_CRYPTO_DIR}/hashing_context.h
     )
-add_library(godot-crypto STATIC ${GODOT_CORE_CRYPTO_SOURCE})
+godot_add_library(godot-crypto core STATIC ${GODOT_CORE_CRYPTO_SOURCE})
 target_include_directories(godot-crypto PUBLIC ${GODOT_ENGINE_ROOT_DIRECTORY})
-target_link_libraries(godot-crypto PUBLIC godot-object mbedtls)
-target_include_directories(godot-crypto PRIVATE ${GODOT_FAKEGEN_ROOT_DIR})
-list(APPEND GODOT_CORE_LIBRARIES_INTERNAL godot-crypto)
+target_link_libraries(godot-crypto PUBLIC godot-object mbedtls godot-io)
 
 ####################################
 #debugger
@@ -229,9 +298,8 @@ set(GODOT_CORE_DEBUGGER_SOURCE
     ${GODOT_CORE_DEBUGGER_DIR}/script_debugger.cpp
     ${GODOT_CORE_DEBUGGER_DIR}/script_debugger.h
     )
-add_library(godot-debugger STATIC ${GODOT_CORE_DEBUGGER_SOURCE})
+godot_add_library(godot-debugger core STATIC ${GODOT_CORE_DEBUGGER_SOURCE})
 target_link_libraries(godot-debugger PUBLIC godot-object)
-list(APPEND GODOT_CORE_LIBRARIES_INTERNAL godot-debugger)
 
 ####################################
 #error
@@ -243,9 +311,8 @@ set(GODOT_CORE_ERROR_SOURCE
     ${GODOT_CORE_ERROR_DIR}/error_macros.cpp
     ${GODOT_CORE_ERROR_DIR}/error_macros.h
 )
-add_library(godot-error STATIC ${GODOT_CORE_ERROR_SOURCE})
+godot_add_library(godot-error core STATIC ${GODOT_CORE_ERROR_SOURCE})
 target_link_libraries(godot-error PUBLIC godot-object)
-list(APPEND GODOT_CORE_LIBRARIES_INTERNAL godot-error)
 
 ####################################
 #extension
@@ -261,9 +328,8 @@ set(GODOT_CORE_EXTENSION_SOURCE
     ${GODOT_CORE_EXTENSION_DIR}/gdextension_manager.cpp
     ${GODOT_CORE_EXTENSION_DIR}/gdextension_manager.h
     )
-add_library(godot-extension STATIC ${GODOT_CORE_EXTENSION_SOURCE})
+godot_add_library(godot-extension core STATIC ${GODOT_CORE_EXTENSION_SOURCE})
 target_link_libraries(godot-extension PUBLIC godot-object)
-list(APPEND GODOT_CORE_LIBRARIES_INTERNAL godot-extension)
 
 ####################################
 #input
@@ -280,9 +346,15 @@ set(GODOT_CORE_INPUT_SOURCE
     ${GODOT_CORE_INPUT_DIR}/shortcut.cpp
     ${GODOT_CORE_INPUT_DIR}/shortcut.h
     )
-add_library(godot-input STATIC ${GODOT_CORE_INPUT_SOURCE})
+
+#Generate the default controller mappings
+set(GODOT_CORE_INPUT_GAME_CONTROLLER_MAPPINGS_SOURCE ${GODOT_CORE_INPUT_DIR}/gamecontrollerdb.txt)
+set(GODOT_CORE_INPUT_GODOT_CONTROLLER_MAPPINGS_SOURCE ${GODOT_CORE_INPUT_DIR}/godotcontrollerdb.txt)
+set(GODOT_CORE_INPUT_CONTROLLER_MAPPINGS_OUTPUT ${CMAKE_BINARY_INCLUDE_DIR}/core/input/default_controller_mappings.gen.cpp)
+GENERATE_CORE_CONTROLLER_MAPPINGS_SOURCES(${GODOT_CORE_INPUT_GAME_CONTROLLER_MAPPINGS_SOURCE} ${GODOT_CORE_INPUT_GODOT_CONTROLLER_MAPPINGS_SOURCE} ${GODOT_CORE_INPUT_CONTROLLER_MAPPINGS_OUTPUT})
+
+godot_add_library(godot-input core STATIC ${GODOT_CORE_INPUT_SOURCE} ${GODOT_CORE_INPUT_CONTROLLER_MAPPINGS_OUTPUT})
 target_link_libraries(godot-input PUBLIC godot-object)
-list(APPEND GODOT_CORE_LIBRARIES_INTERNAL godot-input)
 
 ####################################
 #templates
@@ -322,9 +394,8 @@ set(GODOT_CORE_TEMPLATES_SOURCE
     ${GODOT_CORE_TEMPLATES_DIR}/vmap.h
     ${GODOT_CORE_TEMPLATES_DIR}/vset.h
     )
-add_library(godot-templates STATIC ${GODOT_CORE_TEMPLATES_SOURCE})
+godot_add_library(godot-templates core STATIC ${GODOT_CORE_TEMPLATES_SOURCE})
 target_link_libraries(godot-templates PUBLIC godot-object)
-list(APPEND GODOT_CORE_LIBRARIES_INTERNAL godot-templates)
 
 ####################################
 #io
@@ -417,9 +488,18 @@ set(GODOT_CORE_IO_SOURCE
     ${GODOT_CORE_IO_DIR}/zip_io.cpp
     ${GODOT_CORE_IO_DIR}/zip_io.h
     )
-add_library(godot-io STATIC ${GODOT_CORE_IO_SOURCE})
-target_link_libraries(godot-io PUBLIC godot-object zstd godot-templates godot-string)
-list(APPEND GODOT_CORE_LIBRARIES_INTERNAL godot-io)
+
+####################################
+#Generate the ca-certificates to embed
+####################################
+set(GODOT_CORE_IO_CA_CERTIFICATES_SOURCE ${GODOT_SOURCE_ROOT_THIRDPARTY_DIR}/certs/ca-certificates.crt)
+set(GODOT_CORE_IO_CA_CERTIFICATES_DESTINATION ${CMAKE_BINARY_INCLUDE_DIR}/core/io/certs_compressed.gen.h)
+GENERATE_CORE_SOURCES(certs_header ${GODOT_CORE_IO_CA_CERTIFICATES_SOURCE} ${GODOT_CORE_IO_CA_CERTIFICATES_DESTINATION})
+
+godot_add_library(godot-io core STATIC ${GODOT_CORE_IO_SOURCE} ${GODOT_CORE_IO_CA_CERTIFICATES_DESTINATION})
+target_link_libraries(godot-io PUBLIC godot-object zstd godot-templates godot-string minizip zlib)
+target_compile_definitions(godot-io PUBLIC MINIZIP_ENABLED=1)
+target_include_directories(godot-io PUBLIC ${CMAKE_BINARY_INCLUDE_DIR})
 
 ####################################
 #os
@@ -452,9 +532,8 @@ set(GODOT_CORE_OS_SOURCE
     ${GODOT_CORE_OS_DIR}/time.h
     )
 
-add_library(godot-os STATIC ${GODOT_CORE_OS_SOURCE})
+godot_add_library(godot-os core STATIC ${GODOT_CORE_OS_SOURCE})
 target_link_libraries(godot-os PUBLIC godot-object)
-list(APPEND GODOT_CORE_LIBRARIES_INTERNAL godot-os)
 
 ####################################
 #variant
@@ -492,9 +571,8 @@ set(GODOT_CORE_VARIANT_SOURCE
     ${GODOT_CORE_VARIANT_DIR}/variant_setget.h
     ${GODOT_CORE_VARIANT_DIR}/variant_utility.cpp
     )
-add_library(godot-variant STATIC ${GODOT_CORE_VARIANT_SOURCE})
+godot_add_library(godot-variant core STATIC ${GODOT_CORE_VARIANT_SOURCE})
 target_link_libraries(godot-variant PUBLIC godot-object)
-list(APPEND GODOT_CORE_LIBRARIES_INTERNAL godot-variant)
 
 ####################################
 #core
@@ -515,9 +593,13 @@ set(GODOT_CORE_SOURCE
     ${GODOT_CORE_BASE_DIR}/doc_data.cpp
     ${GODOT_CORE_BASE_DIR}/register_core_types.cpp
     )
-add_library(godot-core STATIC ${GODOT_CORE_SOURCE})
+godot_add_library(godot-core core STATIC ${GODOT_CORE_SOURCE})
 target_link_libraries(godot-core PUBLIC godot-object)
-list(APPEND GODOT_CORE_LIBRARIES_INTERNAL godot-core)
 
-#Apply it to the higher level cmake file
-set(GODOT_CORE_LIBRARIES ${GODOT_CORE_LIBRARIES_INTERNAL} PARENT_SCOPE)
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+	target_link_libraries(godot-core PUBLIC platform-linuxbsd)
+endif()
+
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+	target_link_libraries(godot-core PUBLIC platform-windows)
+endif()

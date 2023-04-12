@@ -17,35 +17,25 @@ set(MAIN_EXECUTABLE_SOURCE
 	${GODOT_MAIN_BASE_DIR}/performance.cpp
 	)
 
-#####################################
-#HACK - Throw all the fakegen stuff here
-####################################
-set(FAKEGEN_SOURCE
-	${GODOT_FAKEGEN_ROOT_DIR}/core/script_encryption_key.gen.cpp
-	${GODOT_FAKEGEN_ROOT_DIR}/core/version_hash.gen.cpp
-	${GODOT_FAKEGEN_ROOT_DIR}/editor/register_exporters.gen.cpp
-	${GODOT_FAKEGEN_ROOT_DIR}/modules/register_module_types.gen.cpp
-	${GODOT_FAKEGEN_ROOT_DIR}/platform/register_platform_apis.gen.cpp
-	${GODOT_FAKEGEN_ROOT_DIR}/core/input/default_controller_mappings.gen.cpp
+set(GODOT_PLATFORM_GENERATED_REGISTERED_APIS_OUTPUT ${CMAKE_BINARY_INCLUDE_DIR}/platform/register_platform_apis.gen.cpp)
+GENERATE_GODOT_REGISTER_PLATFORM_APIS("${GODOT_PLATFORM_GENERATED_REGISTERED_APIS_OUTPUT}")
 
-	)
+set(GODOT_MAIN_EXECUTABLE_APP_ICON_SOURCE ${GODOT_MAIN_BASE_DIR}/app_icon.png)
+set(GODOT_MAIN_EXECUTABLE_APP_ICON_OUTPUT ${CMAKE_BINARY_INCLUDE_DIR}/main/app_icon.gen.h)
+GENERATE_MAIN_EXECUTABLE_SOURCES(make_app_icon ${GODOT_MAIN_EXECUTABLE_APP_ICON_SOURCE} ${GODOT_MAIN_EXECUTABLE_APP_ICON_OUTPUT})
 
- add_executable(GodotEditor ${MAIN_EXECUTABLE_SOURCE} ${FAKEGEN_SOURCE})
- target_link_libraries(GodotEditor PUBLIC
- 									${GODOT_CORE_LIBRARIES} #All the core godot libraries
- 									${GODOT_THIRD_PARTY_LIBRARIES} #Thirdparty
- 									${GODOT_DRIVER_LIBRARIES} #Drivers
- 									${GODOT_SERVER_LIBRARIES} #Servers
- 									${GODOT_MODULE_LIBRARIES} #Modules
- 									${GODOT_PLATFORM_LIBRARIES} #Platform
- 									${GODOT_SCENE_LIBRARIES} #Scene
- 									${GODOT_EDITOR_LIBRARIES} #Editor
- 									)
- target_compile_definitions(GodotEditor PUBLIC NO_EDITOR_SPLASH=1)
+set(GODOT_MAIN_EXECUTABLE_APP_SPLASH_SOURCE ${GODOT_MAIN_BASE_DIR}/splash.png)
+set(GODOT_MAIN_EXECUTABLE_APP_SPLASH_OUTPUT ${CMAKE_BINARY_INCLUDE_DIR}/main/splash.gen.h)
+GENERATE_MAIN_EXECUTABLE_SOURCES(make_app_splash ${GODOT_MAIN_EXECUTABLE_APP_SPLASH_SOURCE} ${GODOT_MAIN_EXECUTABLE_APP_SPLASH_OUTPUT})
 
-#####################################
-#HACK - fakegen includes
-####################################
+add_executable(GodotEditor ${MAIN_EXECUTABLE_SOURCE}
+ 							${GODOT_MAIN_EXECUTABLE_APP_ICON_OUTPUT}
+ 							${GODOT_MAIN_EXECUTABLE_APP_SPLASH_OUTPUT}
+ 							${GODOT_PLATFORM_GENERATED_REGISTERED_APIS_OUTPUT})
+target_link_libraries(GodotEditor PUBLIC ${GODOT_LIBRARIES} ${GODOT_EXTERNAL_EDITOR_MODULES} ${GODOT_EXTERNAL_RUNTIME_MODULES})
+target_include_directories(GodotEditor PUBLIC ${CMAKE_BINARY_INCLUDE_DIR})
+target_compile_definitions(GodotEditor PUBLIC NO_EDITOR_SPLASH=1)
+
 target_include_directories(GodotEditor PUBLIC
 									   ${GODOT_ENGINE_ROOT_DIRECTORY}/modules
 									   ${GODOT_ENGINE_ROOT_DIRECTORY}/editor

@@ -5,9 +5,6 @@ cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
 
 set(GODOT_SOURCE_ROOT_SCENE_DIR ${GODOT_ENGINE_ROOT_DIRECTORY}/scene)
 
-#This variable holds all the targets of this subdirectory
-set(GODOT_SCENE_LIBRARIES_INTERNAL)
-
 ####################################
 #2D
 ####################################
@@ -54,9 +51,8 @@ set(2D_SCENE_SOURCE
 	${2D_SCENE_SOURCE_DIR}/touch_screen_button.cpp
 	${2D_SCENE_SOURCE_DIR}/visible_on_screen_notifier_2d.cpp
 	)
-add_library(godot-scene-2d STATIC ${2D_SCENE_SOURCE})
+godot_add_library(godot-scene-2d scene STATIC ${2D_SCENE_SOURCE})
 target_link_libraries(godot-scene-2d PUBLIC godot-templates)
-list(APPEND GODOT_SCENE_LIBRARIES_INTERNAL godot-scene-2d)
 
 ####################################
 #3D
@@ -160,9 +156,8 @@ set(3D_SCENE_SOURCE
 	${3D_SCENE_SOURCE_DIR}/xr_nodes.cpp
 	${3D_SCENE_SOURCE_DIR}/xr_nodes.h
 	)
-add_library(godot-scene-3d STATIC ${3D_SCENE_SOURCE})
-target_link_libraries(godot-scene-3d PUBLIC godot-os godot-templates godot-thirdparty-misc)
-list(APPEND GODOT_SCENE_LIBRARIES_INTERNAL godot-scene-3d)
+godot_add_library(godot-scene-3d scene STATIC ${3D_SCENE_SOURCE})
+target_link_libraries(godot-scene-3d PUBLIC godot-os godot-templates godot-thirdparty-misc zlib)
 
 ####################################
 #Animation
@@ -187,9 +182,9 @@ set(ANIMATION_SCENE_SOURCE
 	${ANIMATION_SCENE_SOURCE_DIR}/tween.cpp
 	${ANIMATION_SCENE_SOURCE_DIR}/tween.h
 	)
-add_library(godot-scene-animation STATIC ${ANIMATION_SCENE_SOURCE})
+godot_add_library(godot-scene-animation scene STATIC ${ANIMATION_SCENE_SOURCE})
 target_link_libraries(godot-scene-animation PUBLIC godot-math godot-scene-2d godot-scene-3d)
-list(APPEND GODOT_SCENE_LIBRARIES_INTERNAL godot-scene-animation)
+set_property(TARGET godot-scene-animation PROPERTY CXX_STANDARD 17)
 
 ####################################
 #Audio
@@ -199,9 +194,8 @@ set(AUDIO_SCENE_SOURCE
 	${AUDIO_SCENE_SOURCE_DIR}/audio_stream_player.cpp
 	${AUDIO_SCENE_SOURCE_DIR}/audio_stream_player.h
 	)
-add_library(godot-scene-audio STATIC ${AUDIO_SCENE_SOURCE})
+godot_add_library(godot-scene-audio scene STATIC ${AUDIO_SCENE_SOURCE})
 target_link_libraries(godot-scene-audio PUBLIC godot-templates)
-list(APPEND GODOT_SCENE_LIBRARIES_INTERNAL godot-scene-audio)
 
 ####################################
 #Debugger
@@ -211,9 +205,8 @@ set(DEBUGGER_SCENE_SOURCE
 	${DEBUGGER_SCENE_SOURCE_DIR}/scene_debugger.cpp
 	${DEBUGGER_SCENE_SOURCE_DIR}/scene_debugger.h
 	)
-add_library(godot-scene-debugger STATIC ${DEBUGGER_SCENE_SOURCE})
+godot_add_library(godot-scene-debugger scene STATIC ${DEBUGGER_SCENE_SOURCE})
 target_link_libraries(godot-scene-debugger PUBLIC godot-object)
-list(APPEND GODOT_SCENE_LIBRARIES_INTERNAL godot-scene-debugger)
 
 ####################################
 #GUI
@@ -328,9 +321,8 @@ set(GUI_SCENE_SOURCE
 	${GUI_SCENE_SOURCE_DIR}/view_panner.h
 	)
 
-add_library(godot-scene-gui STATIC ${GUI_SCENE_SOURCE})
+godot_add_library(godot-scene-gui scene STATIC ${GUI_SCENE_SOURCE})
 target_link_libraries(godot-scene-gui PUBLIC godot-input godot-server-audio)
-list(APPEND GODOT_SCENE_LIBRARIES_INTERNAL godot-scene-gui)
 
 ####################################
 #main
@@ -366,9 +358,8 @@ set(MAIN_SCENE_SOURCE
 	${MAIN_SCENE_SOURCE_DIR}/window.cpp
 	${MAIN_SCENE_SOURCE_DIR}/window.h
 	)
-add_library(godot-scene-main STATIC ${MAIN_SCENE_SOURCE})
+godot_add_library(godot-scene-main scene STATIC ${MAIN_SCENE_SOURCE})
 target_link_libraries(godot-scene-main PUBLIC godot-io godot-string godot-object godot-os godot-scene-debugger godot-scene-animation godot-scene-gui)
-list(APPEND GODOT_SCENE_LIBRARIES_INTERNAL godot-scene-main)
 
 ####################################
 #default theme
@@ -537,6 +528,17 @@ set(RESOURCES_SCENE_SOURCE
 	${RESOURCES_SCENE_SOURCE_DIR}/world_boundary_shape_3d.h
 	)
 
+set(RESOURCES_DEFAULT_FONT_SOURCE ${GODOT_SOURCE_ROOT_THIRDPARTY_DIR}/fonts/OpenSans_SemiBold.woff2)
+set(RESOURCES_DEFAULT_FONT_OUTPUT ${CMAKE_BINARY_INCLUDE_DIR}/scene/resources/default_theme/default_font.gen.h)
+GENERATE_RESOURCE_SCENE_SOURCES(resource_scene_make_fonts_header ${RESOURCES_DEFAULT_FONT_SOURCE} ${RESOURCES_DEFAULT_FONT_OUTPUT})
+
+godot_add_library(godot-scene-resources scene STATIC ${RESOURCES_SCENE_SOURCE} ${RESOURCES_DEFAULT_FONT_OUTPUT})
+target_link_libraries(godot-scene-resources PUBLIC godot-templates godot-io godot-variant godot-scene-main)
+target_include_directories(godot-scene-resources PUBLIC ${CMAKE_BINARY_INCLUDE_DIR}/scene/resources/default_theme)
+
+####################################
+#Theme
+####################################
 set(RESOURCE_DEFAULT_THEME_SOURCE
 	${RESOURCES_SCENE_SOURCE_DIR}/default_theme/vslider_tick.svg
 	${RESOURCES_SCENE_SOURCE_DIR}/default_theme/add.svg
@@ -612,14 +614,10 @@ set(RESOURCE_DEFAULT_THEME_SOURCE
 	${RESOURCES_SCENE_SOURCE_DIR}/default_theme/bookmark.svg
 	${RESOURCES_SCENE_SOURCE_DIR}/default_theme/toggle_on_disabled.svg
 	)
-add_library(godot-scene-resources STATIC ${RESOURCES_SCENE_SOURCE})
-target_link_libraries(godot-scene-resources PUBLIC godot-templates godot-io godot-variant godot-scene-main)
 
-list(APPEND GODOT_SCENE_LIBRARIES_INTERNAL godot-scene-resources)
+set(RESOURCES_SCENE_DEFAULT_GENERATED_ICONS ${CMAKE_BINARY_INCLUDE_DIR}/scene/resources/default_theme/default_theme_icons.gen.h)
+GENERATE_RESOURCE_THEME_ICONS("${RESOURCE_DEFAULT_THEME_SOURCE}" "${RESOURCES_SCENE_DEFAULT_GENERATED_ICONS}")
 
-####################################
-#Theme
-####################################
 set(THEME_SCENE_SOURCE_DIR ${GODOT_SOURCE_ROOT_SCENE_DIR}/theme)
 set(THEME_SCENE_SOURCE
 	${THEME_SCENE_SOURCE_DIR}/theme_db.cpp
@@ -630,10 +628,10 @@ set(THEME_SCENE_SOURCE
 	${RESOURCES_SCENE_SOURCE_DIR}/default_theme/default_theme.h
 	${RESOURCES_SCENE_SOURCE_DIR}/default_theme/default_theme.cpp
 	)
-add_library(godot-scene-theme STATIC ${THEME_SCENE_SOURCE})
-target_link_libraries(godot-scene-theme PUBLIC godot-object)
-target_include_directories(godot-scene-theme PRIVATE ${GODOT_FAKEGEN_ROOT_DIR}/scene/resources)
-list(APPEND GODOT_SCENE_LIBRARIES_INTERNAL godot-scene-theme)
+
+godot_add_library(godot-scene-theme scene STATIC ${THEME_SCENE_SOURCE} ${RESOURCES_SCENE_DEFAULT_GENERATED_ICONS})
+target_link_libraries(godot-scene-theme PUBLIC godot-object godot-scene-resources)
+target_include_directories(godot-scene-theme PRIVATE ${CMAKE_BINARY_INCLUDE_DIR}/scene/resources/default_theme)
 
 ####################################
 #Scene
@@ -646,8 +644,5 @@ set(SCENE_SOURCE
 	${GODOT_SOURCE_ROOT_SCENE_DIR}/register_scene_types.cpp
 	${GODOT_SOURCE_ROOT_SCENE_DIR}/scene_string_names.cpp
 	)
-add_library(godot-scene STATIC ${SCENE_SOURCE})
+godot_add_library(godot-scene scene STATIC ${SCENE_SOURCE})
 target_link_libraries(godot-scene PUBLIC godot-string godot-config godot-scene-resources godot-scene-audio)
-list(APPEND GODOT_SCENE_LIBRARIES_INTERNAL godot-scene)
-
-set(GODOT_SCENE_LIBRARIES ${GODOT_SCENE_LIBRARIES_INTERNAL} PARENT_SCOPE)

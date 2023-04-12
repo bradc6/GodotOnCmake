@@ -3,11 +3,6 @@
 #to the target as modern cmake code affords us
 cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
 
-set(GODOT_SOURCE_ROOT_THIRDPARTY_DIR ${GODOT_ENGINE_ROOT_DIRECTORY}/thirdparty)
-
-#This variable holds all the targets of this subdirectory
-set(GODOT_THIRD_PARTY_LIBRARIES_INTERNAL)
-
 ####################################
 #amd-fsr
 ####################################
@@ -17,9 +12,8 @@ set(AMD_FSR_SOURCE
     ${AMD_FSR_SOURCE_DIR}/ffx_fsr1.h
     )
 
-add_library(amd-fsr INTERFACE)
+godot_add_library(amd-fsr thirdparty INTERFACE)
 target_include_directories(amd-fsr INTERFACE ${AMD_FSR_SOURCE_DIR})
-list(APPEND GODOT_THIRD_PARTY_LIBRARIES_INTERNAL amd-fsr)
 
 ####################################
 #astcenc
@@ -62,9 +56,8 @@ set(ASTCENC_SOURCE
     ${ASTCENC_SOURCE_DIR}/astcenc_weight_quant_xfer_tables.cpp
     )
 
-add_library(astcenc STATIC ${ASTCENC_SOURCE})
+godot_add_library(astcenc thirdparty STATIC ${ASTCENC_SOURCE})
 target_include_directories(astcenc PUBLIC ${ASTCENC_SOURCE_DIR})
-list(APPEND GODOT_THIRD_PARTY_LIBRARIES_INTERNAL astcenc)
 
 ####################################
 #basis_universal
@@ -136,11 +129,10 @@ set(BASIS_UNIVERSAL_SOURCE
     ${BASIS_UNIVERSAL_SOURCE_TRANSCODER_DIR}/basisu_transcoder_tables_pvrtc2_alpha_33.inc
     ${BASIS_UNIVERSAL_SOURCE_TRANSCODER_DIR}/basisu_transcoder_uastc.h
     )
-add_library(basis_universal STATIC ${BASIS_UNIVERSAL_SOURCE})
+godot_add_library(basis_universal thirdparty STATIC ${BASIS_UNIVERSAL_SOURCE})
 target_link_libraries(basis_universal PUBLIC zstd)
 target_include_directories(basis_universal PRIVATE ${BASIS_UNIVERSAL_SOURCE_DIR})
 target_include_directories(basis_universal PUBLIC ${BASIS_UNIVERSAL_SOURCE_DIR})
-list(APPEND GODOT_THIRD_PARTY_LIBRARIES_INTERNAL basis_universal)
 
 ####################################
 #brotil
@@ -176,9 +168,8 @@ set(BROTLI_SOURCE
     ${BROTLI_SOURCE_DIR}/include/brotli/decode.h
     )
 
-add_library(brotli STATIC ${BROTLI_SOURCE})
+godot_add_library(brotli thirdparty STATIC ${BROTLI_SOURCE})
 target_include_directories(brotli PUBLIC ${BROTLI_SOURCE_DIR}/include)
-list(APPEND GODOT_THIRD_PARTY_LIBRARIES_INTERNAL brotli)
 
 ####################################
 #cvtt
@@ -219,378 +210,18 @@ set(CVTT_SOURCE
     ${CVTT_SOURCE_DIR}/ConvectionKernels_Util.cpp
     ${CVTT_SOURCE_DIR}/ConvectionKernels_Util.h
     )
-add_library(cvtt STATIC ${CVTT_SOURCE})
+godot_add_library(cvtt thirdparty STATIC ${CVTT_SOURCE})
 target_include_directories(cvtt PUBLIC ${CVTT_SOURCE_DIR})
-list(APPEND GODOT_THIRD_PARTY_LIBRARIES_INTERNAL cvtt)
 
 ####################################
 #embree
 ####################################
-set(EMBREE_SOURCE_DIR ${GODOT_SOURCE_ROOT_THIRDPARTY_DIR}/embree)
-set(EMBREE_SOURCE
-    ${EMBREE_SOURCE_DIR}/common/math/color.h
-    ${EMBREE_SOURCE_DIR}/common/math/range.h
-    ${EMBREE_SOURCE_DIR}/common/math/vec3.h
-    ${EMBREE_SOURCE_DIR}/common/math/transcendental.h
-    ${EMBREE_SOURCE_DIR}/common/math/lbbox.h
-    ${EMBREE_SOURCE_DIR}/common/math/constants.cpp
-    ${EMBREE_SOURCE_DIR}/common/math/vec3ba.h
-    ${EMBREE_SOURCE_DIR}/common/math/linearspace3.h
-    ${EMBREE_SOURCE_DIR}/common/math/interval.h
-    ${EMBREE_SOURCE_DIR}/common/math/vec2.h
-    ${EMBREE_SOURCE_DIR}/common/math/constants.h
-    ${EMBREE_SOURCE_DIR}/common/math/linearspace2.h
-    ${EMBREE_SOURCE_DIR}/common/math/obbox.h
-    ${EMBREE_SOURCE_DIR}/common/math/vec2fa.h
-    ${EMBREE_SOURCE_DIR}/common/math/vec4.h
-    ${EMBREE_SOURCE_DIR}/common/math/affinespace.h
-    ${EMBREE_SOURCE_DIR}/common/math/math.h
-    ${EMBREE_SOURCE_DIR}/common/math/bbox.h
-    ${EMBREE_SOURCE_DIR}/common/math/vec3ia.h
-    ${EMBREE_SOURCE_DIR}/common/math/col3.h
-    ${EMBREE_SOURCE_DIR}/common/math/quaternion.h
-    ${EMBREE_SOURCE_DIR}/common/math/col4.h
-    ${EMBREE_SOURCE_DIR}/common/math/vec3fa.h
-    ${EMBREE_SOURCE_DIR}/common/algorithms/parallel_reduce.h
-    ${EMBREE_SOURCE_DIR}/common/algorithms/parallel_set.h
-    ${EMBREE_SOURCE_DIR}/common/algorithms/parallel_filter.h
-    ${EMBREE_SOURCE_DIR}/common/algorithms/parallel_sort.h
-    ${EMBREE_SOURCE_DIR}/common/algorithms/parallel_for_for_prefix_sum.h
-    ${EMBREE_SOURCE_DIR}/common/algorithms/parallel_prefix_sum.h
-    ${EMBREE_SOURCE_DIR}/common/algorithms/parallel_map.h
-    ${EMBREE_SOURCE_DIR}/common/algorithms/parallel_any_of.h
-    ${EMBREE_SOURCE_DIR}/common/algorithms/parallel_partition.h
-    ${EMBREE_SOURCE_DIR}/common/algorithms/parallel_for.h
-    ${EMBREE_SOURCE_DIR}/common/algorithms/parallel_for_for.h
-    ${EMBREE_SOURCE_DIR}/common/simd/vdouble8_avx512.h
-    ${EMBREE_SOURCE_DIR}/common/simd/vllong4_avx2.h
-    ${EMBREE_SOURCE_DIR}/common/simd/varying.h
-    ${EMBREE_SOURCE_DIR}/common/simd/vllong8_avx512.h
-    ${EMBREE_SOURCE_DIR}/common/simd/vboolf4_avx512.h
-    ${EMBREE_SOURCE_DIR}/common/simd/vboold4_avx.h
-    ${EMBREE_SOURCE_DIR}/common/simd/vboold8_avx512.h
-    ${EMBREE_SOURCE_DIR}/common/simd/vboold4_avx512.h
-    ${EMBREE_SOURCE_DIR}/common/simd/vdouble4_avx.h
-    ${EMBREE_SOURCE_DIR}/common/simd/vboolf8_avx512.h
-    ${EMBREE_SOURCE_DIR}/common/simd/vboolf8_avx.h
-    ${EMBREE_SOURCE_DIR}/common/simd/vfloat16_avx512.h
-    ${EMBREE_SOURCE_DIR}/common/simd/vboolf4_sse2.h
-    ${EMBREE_SOURCE_DIR}/common/simd/sse.cpp
-    ${EMBREE_SOURCE_DIR}/common/simd/avx512.h
-    ${EMBREE_SOURCE_DIR}/common/simd/vuint4_sse2.h
-    ${EMBREE_SOURCE_DIR}/common/simd/vboolf16_avx512.h
-    ${EMBREE_SOURCE_DIR}/common/simd/vfloat8_avx.h
-    ${EMBREE_SOURCE_DIR}/common/simd/vint8_avx2.h
-    ${EMBREE_SOURCE_DIR}/common/simd/vint16_avx512.h
-    ${EMBREE_SOURCE_DIR}/common/simd/avx.h
-    ${EMBREE_SOURCE_DIR}/common/simd/wasm/emulation.h
-    ${EMBREE_SOURCE_DIR}/common/simd/vuint8_avx.h
-    ${EMBREE_SOURCE_DIR}/common/simd/vuint8_avx2.h
-    ${EMBREE_SOURCE_DIR}/common/simd/vint8_avx.h
-    ${EMBREE_SOURCE_DIR}/common/simd/vint4_sse2.h
-    ${EMBREE_SOURCE_DIR}/common/simd/arm/avx2neon.h
-    ${EMBREE_SOURCE_DIR}/common/simd/arm/emulation.h
-    ${EMBREE_SOURCE_DIR}/common/simd/arm/sse2neon.h
-    ${EMBREE_SOURCE_DIR}/common/simd/vuint16_avx512.h
-    ${EMBREE_SOURCE_DIR}/common/simd/vfloat4_sse2.h
-    ${EMBREE_SOURCE_DIR}/common/simd/sse.h
-    ${EMBREE_SOURCE_DIR}/common/simd/simd.h
-    ${EMBREE_SOURCE_DIR}/common/sys/barrier.h
-    ${EMBREE_SOURCE_DIR}/common/sys/thread.cpp
-    ${EMBREE_SOURCE_DIR}/common/sys/barrier.cpp
-    ${EMBREE_SOURCE_DIR}/common/sys/regression.h
-    ${EMBREE_SOURCE_DIR}/common/sys/sysinfo.cpp
-    ${EMBREE_SOURCE_DIR}/common/sys/library.cpp
-    ${EMBREE_SOURCE_DIR}/common/sys/string.cpp
-    ${EMBREE_SOURCE_DIR}/common/sys/condition.cpp
-    ${EMBREE_SOURCE_DIR}/common/sys/atomic.h
-    ${EMBREE_SOURCE_DIR}/common/sys/regression.cpp
-    ${EMBREE_SOURCE_DIR}/common/sys/mutex.h
-    ${EMBREE_SOURCE_DIR}/common/sys/string.h
-    ${EMBREE_SOURCE_DIR}/common/sys/condition.h
-    ${EMBREE_SOURCE_DIR}/common/sys/mutex.cpp
-    ${EMBREE_SOURCE_DIR}/common/sys/library.h
-    ${EMBREE_SOURCE_DIR}/common/sys/filename.cpp
-    ${EMBREE_SOURCE_DIR}/common/sys/alloc.h
-    ${EMBREE_SOURCE_DIR}/common/sys/sysinfo.h
-    ${EMBREE_SOURCE_DIR}/common/sys/platform.h
-    ${EMBREE_SOURCE_DIR}/common/sys/array.h
-    ${EMBREE_SOURCE_DIR}/common/sys/alloc.cpp
-    ${EMBREE_SOURCE_DIR}/common/sys/vector.h
-    ${EMBREE_SOURCE_DIR}/common/sys/intrinsics.h
-    ${EMBREE_SOURCE_DIR}/common/sys/ref.h
-    ${EMBREE_SOURCE_DIR}/common/sys/filename.h
-    ${EMBREE_SOURCE_DIR}/common/sys/thread.h
-    ${EMBREE_SOURCE_DIR}/common/tasking/taskscheduler.h
-    ${EMBREE_SOURCE_DIR}/common/tasking/taskschedulerppl.h
-    ${EMBREE_SOURCE_DIR}/common/tasking/taskschedulertbb.h
-    ${EMBREE_SOURCE_DIR}/common/tasking/taskschedulerinternal.cpp
-    ${EMBREE_SOURCE_DIR}/common/tasking/taskschedulerinternal.h
-    ${EMBREE_SOURCE_DIR}/common/lexers/stringstream.cpp
-    ${EMBREE_SOURCE_DIR}/common/lexers/stringstream.h
-    ${EMBREE_SOURCE_DIR}/common/lexers/streamfilters.h
-    ${EMBREE_SOURCE_DIR}/common/lexers/stream.h
-    ${EMBREE_SOURCE_DIR}/common/lexers/tokenstream.cpp
-    ${EMBREE_SOURCE_DIR}/common/lexers/tokenstream.h
-    ${EMBREE_SOURCE_DIR}/common/lexers/parsestream.h
-    ${EMBREE_SOURCE_DIR}/include/embree3/rtcore_config.h
-    ${EMBREE_SOURCE_DIR}/include/embree3/rtcore_ray.h
-    ${EMBREE_SOURCE_DIR}/include/embree3/rtcore_scene.h
-    ${EMBREE_SOURCE_DIR}/include/embree3/rtcore_quaternion.h
-    ${EMBREE_SOURCE_DIR}/include/embree3/rtcore_builder.h
-    ${EMBREE_SOURCE_DIR}/include/embree3/rtcore_buffer.h
-    ${EMBREE_SOURCE_DIR}/include/embree3/rtcore_geometry.h
-    ${EMBREE_SOURCE_DIR}/include/embree3/rtcore_common.h
-    ${EMBREE_SOURCE_DIR}/include/embree3/rtcore.h
-    ${EMBREE_SOURCE_DIR}/include/embree3/rtcore_device.h
-    ${EMBREE_SOURCE_DIR}/kernels/bvh/bvh_traverser_stream.h
-    ${EMBREE_SOURCE_DIR}/kernels/bvh/bvh_node_aabb_mb4d.h
-    ${EMBREE_SOURCE_DIR}/kernels/bvh/bvh4_factory.cpp
-    ${EMBREE_SOURCE_DIR}/kernels/bvh/bvh4_factory.h
-    ${EMBREE_SOURCE_DIR}/kernels/bvh/bvh_statistics.cpp
-    ${EMBREE_SOURCE_DIR}/kernels/bvh/node_intersector_packet_stream.h
-    ${EMBREE_SOURCE_DIR}/kernels/bvh/node_intersector.h
-    ${EMBREE_SOURCE_DIR}/kernels/bvh/bvh_traverser1.h
-    ${EMBREE_SOURCE_DIR}/kernels/bvh/bvh_node_aabb_mb.h
-    ${EMBREE_SOURCE_DIR}/kernels/bvh/bvh.h
-    ${EMBREE_SOURCE_DIR}/kernels/bvh/bvh_intersector1.cpp
-    ${EMBREE_SOURCE_DIR}/kernels/bvh/bvh_node_qaabb.h
-    ${EMBREE_SOURCE_DIR}/kernels/bvh/bvh_refit.h
-    ${EMBREE_SOURCE_DIR}/kernels/bvh/node_intersector_frustum.h
-    ${EMBREE_SOURCE_DIR}/kernels/bvh/bvh_node_aabb.h
-    ${EMBREE_SOURCE_DIR}/kernels/bvh/bvh_intersector_hybrid.cpp
-    ${EMBREE_SOURCE_DIR}/kernels/bvh/bvh_intersector_hybrid4_bvh4.cpp
-    ${EMBREE_SOURCE_DIR}/kernels/bvh/bvh_node_ref.h
-    ${EMBREE_SOURCE_DIR}/kernels/bvh/bvh_node_obb_mb.h
-    ${EMBREE_SOURCE_DIR}/kernels/bvh/bvh_node_base.h
-    ${EMBREE_SOURCE_DIR}/kernels/bvh/bvh_rotate.cpp
-    ${EMBREE_SOURCE_DIR}/kernels/bvh/bvh_intersector_stream_filters.h
-    ${EMBREE_SOURCE_DIR}/kernels/bvh/bvh8_factory.cpp
-    ${EMBREE_SOURCE_DIR}/kernels/bvh/bvh_collider.h
-    ${EMBREE_SOURCE_DIR}/kernels/bvh/bvh_intersector_hybrid.h
-    ${EMBREE_SOURCE_DIR}/kernels/bvh/bvh_builder_sah_mb.cpp
-    ${EMBREE_SOURCE_DIR}/kernels/bvh/bvh_refit.cpp
-    ${EMBREE_SOURCE_DIR}/kernels/bvh/bvh_builder_twolevel.h
-    ${EMBREE_SOURCE_DIR}/kernels/bvh/bvh_builder_morton.cpp
-    ${EMBREE_SOURCE_DIR}/kernels/bvh/bvh_builder_twolevel_internal.h
-    ${EMBREE_SOURCE_DIR}/kernels/bvh/bvh_builder_twolevel.cpp
-    ${EMBREE_SOURCE_DIR}/kernels/bvh/bvh_factory.h
-    ${EMBREE_SOURCE_DIR}/kernels/bvh/bvh_builder.h
-    ${EMBREE_SOURCE_DIR}/kernels/bvh/bvh_node_obb.h
-    ${EMBREE_SOURCE_DIR}/kernels/bvh/bvh_builder.cpp
-    ${EMBREE_SOURCE_DIR}/kernels/bvh/bvh_intersector_stream_bvh4.cpp
-    ${EMBREE_SOURCE_DIR}/kernels/bvh/bvh8_factory.h
-    ${EMBREE_SOURCE_DIR}/kernels/bvh/bvh_builder_sah_spatial.cpp
-    ${EMBREE_SOURCE_DIR}/kernels/bvh/bvh_intersector_stream.h
-    ${EMBREE_SOURCE_DIR}/kernels/bvh/bvh_intersector1.h
-    ${EMBREE_SOURCE_DIR}/kernels/bvh/bvh_rotate.h
-    ${EMBREE_SOURCE_DIR}/kernels/bvh/bvh_collider.cpp
-    ${EMBREE_SOURCE_DIR}/kernels/bvh/bvh_intersector1_bvh4.cpp
-    ${EMBREE_SOURCE_DIR}/kernels/bvh/bvh_intersector_stream.cpp
-    ${EMBREE_SOURCE_DIR}/kernels/bvh/bvh.cpp
-    ${EMBREE_SOURCE_DIR}/kernels/bvh/bvh_intersector_stream_filters.cpp
-    ${EMBREE_SOURCE_DIR}/kernels/bvh/node_intersector1.h
-    ${EMBREE_SOURCE_DIR}/kernels/bvh/node_intersector_packet.h
-    ${EMBREE_SOURCE_DIR}/kernels/bvh/bvh_statistics.h
-    ${EMBREE_SOURCE_DIR}/kernels/bvh/bvh_builder_sah.cpp
-    ${EMBREE_SOURCE_DIR}/kernels/builders/heuristic_binning_array_unaligned.h
-    ${EMBREE_SOURCE_DIR}/kernels/builders/heuristic_openmerge_array.h
-    ${EMBREE_SOURCE_DIR}/kernels/builders/primrefgen.h
-    ${EMBREE_SOURCE_DIR}/kernels/builders/priminfo.h
-    ${EMBREE_SOURCE_DIR}/kernels/builders/bvh_builder_msmblur_hair.h
-    ${EMBREE_SOURCE_DIR}/kernels/builders/bvh_builder_sah.h
-    ${EMBREE_SOURCE_DIR}/kernels/builders/heuristic_binning_array_aligned.h
-    ${EMBREE_SOURCE_DIR}/kernels/builders/bvh_builder_msmblur.h
-    ${EMBREE_SOURCE_DIR}/kernels/builders/primrefgen_presplit.h
-    ${EMBREE_SOURCE_DIR}/kernels/builders/heuristic_timesplit_array.h
-    ${EMBREE_SOURCE_DIR}/kernels/builders/bvh_builder_hair.h
-    ${EMBREE_SOURCE_DIR}/kernels/builders/heuristic_spatial_array.h
-    ${EMBREE_SOURCE_DIR}/kernels/builders/primrefgen.cpp
-    ${EMBREE_SOURCE_DIR}/kernels/builders/heuristic_binning.h
-    ${EMBREE_SOURCE_DIR}/kernels/builders/bvh_builder_morton.h
-    ${EMBREE_SOURCE_DIR}/kernels/builders/heuristic_spatial.h
-    ${EMBREE_SOURCE_DIR}/kernels/builders/heuristic_strand_array.h
-    ${EMBREE_SOURCE_DIR}/kernels/builders/splitter.h
-    ${EMBREE_SOURCE_DIR}/kernels/hash.h
-    ${EMBREE_SOURCE_DIR}/kernels/config.h
-    ${EMBREE_SOURCE_DIR}/kernels/common/rtcore.cpp
-    ${EMBREE_SOURCE_DIR}/kernels/common/point_query.h
-    ${EMBREE_SOURCE_DIR}/kernels/common/buffer.h
-    ${EMBREE_SOURCE_DIR}/kernels/common/isa.h
-    ${EMBREE_SOURCE_DIR}/kernels/common/builder.h
-    ${EMBREE_SOURCE_DIR}/kernels/common/instance_stack.h
-    ${EMBREE_SOURCE_DIR}/kernels/common/accelinstance.h
-    ${EMBREE_SOURCE_DIR}/kernels/common/accelset.h
-    ${EMBREE_SOURCE_DIR}/kernels/common/motion_derivative.h
-    ${EMBREE_SOURCE_DIR}/kernels/common/scene_curves.h
-    ${EMBREE_SOURCE_DIR}/kernels/common/primref.h
-    ${EMBREE_SOURCE_DIR}/kernels/common/hit.h
-    ${EMBREE_SOURCE_DIR}/kernels/common/scene_triangle_mesh.h
-    ${EMBREE_SOURCE_DIR}/kernels/common/rtcore_builder.cpp
-    ${EMBREE_SOURCE_DIR}/kernels/common/geometry.cpp
-    ${EMBREE_SOURCE_DIR}/kernels/common/scene.h
-    ${EMBREE_SOURCE_DIR}/kernels/common/primref_mb.h
-    ${EMBREE_SOURCE_DIR}/kernels/common/scene_grid_mesh.h
-    ${EMBREE_SOURCE_DIR}/kernels/common/stat.cpp
-    ${EMBREE_SOURCE_DIR}/kernels/common/state.cpp
-    ${EMBREE_SOURCE_DIR}/kernels/common/scene_points.h
-    ${EMBREE_SOURCE_DIR}/kernels/common/state.h
-    ${EMBREE_SOURCE_DIR}/kernels/common/scene_user_geometry.h
-    ${EMBREE_SOURCE_DIR}/kernels/common/acceln.h
-    ${EMBREE_SOURCE_DIR}/kernels/common/accel.h
-    ${EMBREE_SOURCE_DIR}/kernels/common/default.h
-    ${EMBREE_SOURCE_DIR}/kernels/common/scene.cpp
-    ${EMBREE_SOURCE_DIR}/kernels/common/device.cpp
-    ${EMBREE_SOURCE_DIR}/kernels/common/alloc.h
-    ${EMBREE_SOURCE_DIR}/kernels/common/geometry.h
-    ${EMBREE_SOURCE_DIR}/kernels/common/scene_triangle_mesh.cpp
-    ${EMBREE_SOURCE_DIR}/kernels/common/stat.h
-    ${EMBREE_SOURCE_DIR}/kernels/common/stack_item.h
-    ${EMBREE_SOURCE_DIR}/kernels/common/alloc.cpp
-    ${EMBREE_SOURCE_DIR}/kernels/common/vector.h
-    ${EMBREE_SOURCE_DIR}/kernels/common/context.h
-    ${EMBREE_SOURCE_DIR}/kernels/common/scene_quad_mesh.h
-    ${EMBREE_SOURCE_DIR}/kernels/common/scene_line_segments.h
-    ${EMBREE_SOURCE_DIR}/kernels/common/device.h
-    ${EMBREE_SOURCE_DIR}/kernels/common/acceln.cpp
-    ${EMBREE_SOURCE_DIR}/kernels/common/accelset.cpp
-    ${EMBREE_SOURCE_DIR}/kernels/common/profile.h
-    ${EMBREE_SOURCE_DIR}/kernels/common/scene_subdiv_mesh.h
-    ${EMBREE_SOURCE_DIR}/kernels/common/rtcore.h
-    ${EMBREE_SOURCE_DIR}/kernels/common/scene_instance.h
-    ${EMBREE_SOURCE_DIR}/kernels/common/ray.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/object_intersector.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/quadi.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/cone.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/spherei_intersector.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/curve_intersector_virtual.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/grid_intersector.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/triangle.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/disc_intersector.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/object.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/quadv_intersector.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/triangle_intersector_moeller.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/curve_intersector.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/quad_intersector_pluecker.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/cylinder.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/instance_intersector.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/disci_intersector.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/grid_soa_intersector_packet.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/trianglev.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/roundline_intersector.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/subgrid_mb_intersector.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/curve_intersector_sweep.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/sphere_intersector.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/curve_intersector_ribbon.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/trianglei.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/subdivpatch1_intersector.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/quad_intersector_moeller.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/trianglev_mb_intersector.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/curveNi_intersector.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/roundlinei_intersector.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/subgrid_intersector_moeller.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/curveNv_intersector.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/subgrid_intersector_pluecker.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/line_intersector.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/subdivpatch1.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/curveNi.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/curve_intersector_precalculations.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/linei.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/subgrid_intersector.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/intersector_iterators.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/conelinei_intersector.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/intersector_epilog.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/curveNv.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/curve_intersector_oriented.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/primitive4.cpp
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/trianglev_intersector.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/instance.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/pointi.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/quadv.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/triangle_triangle_intersector.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/quadi_intersector.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/quad_intersector.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/triangle_intersector_woop.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/primitive.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/triangle_intersector.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/grid_soa_intersector1.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/subgrid.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/curve_intersector_distance.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/triangle_intersector_pluecker.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/curveNi_mb.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/filter.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/grid_soa.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/linei_intersector.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/trianglei_intersector.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/plane.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/coneline_intersector.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/curveNi_mb_intersector.h
-    ${EMBREE_SOURCE_DIR}/kernels/geometry/trianglev_mb.h
-    ${EMBREE_SOURCE_DIR}/kernels/subdiv/bspline_patch.h
-    ${EMBREE_SOURCE_DIR}/kernels/subdiv/hermite_curve.h
-    ${EMBREE_SOURCE_DIR}/kernels/subdiv/patch_eval_grid.h
-    ${EMBREE_SOURCE_DIR}/kernels/subdiv/feature_adaptive_eval.h
-    ${EMBREE_SOURCE_DIR}/kernels/subdiv/half_edge.h
-    ${EMBREE_SOURCE_DIR}/kernels/subdiv/feature_adaptive_eval_grid.h
-    ${EMBREE_SOURCE_DIR}/kernels/subdiv/tessellation.h
-    ${EMBREE_SOURCE_DIR}/kernels/subdiv/bezier_curve.h
-    ${EMBREE_SOURCE_DIR}/kernels/subdiv/subdivpatch1base.h
-    ${EMBREE_SOURCE_DIR}/kernels/subdiv/catmullclark_patch.h
-    ${EMBREE_SOURCE_DIR}/kernels/subdiv/patch_eval.h
-    ${EMBREE_SOURCE_DIR}/kernels/subdiv/catmullclark_coefficients.h
-    ${EMBREE_SOURCE_DIR}/kernels/subdiv/catmullclark_ring.h
-    ${EMBREE_SOURCE_DIR}/kernels/subdiv/bilinear_patch.h
-    ${EMBREE_SOURCE_DIR}/kernels/subdiv/linear_bezier_patch.h
-    ${EMBREE_SOURCE_DIR}/kernels/subdiv/catmullrom_curve.h
-    ${EMBREE_SOURCE_DIR}/kernels/subdiv/patch.h
-    ${EMBREE_SOURCE_DIR}/kernels/subdiv/gregory_patch_dense.h
-    ${EMBREE_SOURCE_DIR}/kernels/subdiv/gregory_patch.h
-    ${EMBREE_SOURCE_DIR}/kernels/subdiv/gridrange.h
-    ${EMBREE_SOURCE_DIR}/kernels/subdiv/patch_eval_simd.h
-    ${EMBREE_SOURCE_DIR}/kernels/subdiv/feature_adaptive_eval_simd.h
-    ${EMBREE_SOURCE_DIR}/kernels/subdiv/bezier_patch.h
-    ${EMBREE_SOURCE_DIR}/kernels/subdiv/tessellation_cache.h
-    ${EMBREE_SOURCE_DIR}/kernels/subdiv/bspline_curve.h
-    )
-add_library(embree STATIC ${EMBREE_SOURCE})
-target_compile_definitions(embree PRIVATE
-                                  TASKING_INTERNAL=1
-                                  EMBREE_TARGET_SSE2=1
-                                  EMBREE_LOWEST_ISA=1
-                                  #HACK Remove the ignore
-                                  EMBREE_IGNORE_INVALID_RAYS=1)
-target_include_directories(embree PUBLIC ${EMBREE_SOURCE_DIR}/include)
-list(APPEND GODOT_THIRD_PARTY_LIBRARIES_INTERNAL embree)
+add_subdirectory(embree)
 
 ####################################
 #enet
 ####################################
-set(ENET_SOURCE_DIR ${GODOT_SOURCE_ROOT_THIRDPARTY_DIR}/enet)
-set(ENET_SOURCE
-    ${ENET_SOURCE_DIR}/callbacks.c
-    ${ENET_SOURCE_DIR}/compress.c
-    ${ENET_SOURCE_DIR}/enet/godot_ext.h
-    ${ENET_SOURCE_DIR}/enet/time.h
-    ${ENET_SOURCE_DIR}/enet/callbacks.h
-    ${ENET_SOURCE_DIR}/enet/godot.h
-    ${ENET_SOURCE_DIR}/enet/list.h
-    ${ENET_SOURCE_DIR}/enet/types.h
-    ${ENET_SOURCE_DIR}/enet/enet.h
-    ${ENET_SOURCE_DIR}/enet/protocol.h
-    ${ENET_SOURCE_DIR}/enet/utility.h
-    #TODO - THIS needs to be in the engine target
-    #${ENET_SOURCE_DIR}/godot.cpp
-    ${ENET_SOURCE_DIR}/host.c
-    ${ENET_SOURCE_DIR}/list.c
-    ${ENET_SOURCE_DIR}/packet.c
-    ${ENET_SOURCE_DIR}/patches/godot_socket.patch
-    ${ENET_SOURCE_DIR}/peer.c
-    ${ENET_SOURCE_DIR}/protocol.c
-    )
-add_library(enet STATIC ${ENET_SOURCE})
-target_include_directories(enet PUBLIC ${ENET_SOURCE_DIR})
-target_compile_definitions(enet PUBLIC GODOT_ENET=1)
-list(APPEND GODOT_THIRD_PARTY_LIBRARIES_INTERNAL enet)
+add_subdirectory(enet)
 
 ####################################
 #etcpak
@@ -610,9 +241,8 @@ set(ETCPAK_SOURCE
     ${ETCPAK_SOURCE_DIR}/Tables.hpp
     ${ETCPAK_SOURCE_DIR}/Vector.hpp
 )
-add_library(etcpak STATIC ${ETCPAK_SOURCE})
+godot_add_library(etcpak thirdparty STATIC ${ETCPAK_SOURCE})
 target_include_directories(etcpak PUBLIC ${ETCPAK_SOURCE_DIR})
-list(APPEND GODOT_THIRD_PARTY_LIBRARIES_INTERNAL etcpak)
 
 ####################################
 #freetype
@@ -702,31 +332,25 @@ set(FREETYPE_SOURCE
         # ${FREETYPE_SOURCE_DIR}/src/sfnt/woff2tags.h
 
 	)
-add_library(freetype STATIC ${FREETYPE_SOURCE})
+godot_add_library(freetype thirdparty STATIC ${FREETYPE_SOURCE})
 target_include_directories(freetype PUBLIC ${FREETYPE_SOURCE_DIR}/include)
 target_compile_definitions(freetype PUBLIC FT_CONFIG_OPTION_USE_BROTLI FT2_BUILD_LIBRARY FT_CONFIG_OPTION_USE_PNG FT_CONFIG_OPTION_SYSTEM_ZLIB)
-target_link_libraries(freetype zlib brotli)
-list(APPEND GODOT_THIRD_PARTY_LIBRARIES_INTERNAL freetype)
+target_link_libraries(freetype png zlib brotli)
 
 ####################################
 #glad
 ####################################
-set(GLAD_SOURCE_DIR ${GODOT_SOURCE_ROOT_THIRDPARTY_DIR}/glad)
-set(GLAD_SOURCE
-    ${GLAD_SOURCE_DIR}/glad/glx.h
-    ${GLAD_SOURCE_DIR}/glad/gl.h
-    ${GLAD_SOURCE_DIR}/gl.c
-    ${GLAD_SOURCE_DIR}/glx.c
-    ${GLAD_SOURCE_DIR}/KHR/khrplatform.h
-    )
-add_library(glad STATIC ${GLAD_SOURCE})
-target_include_directories(glad PUBLIC ${GLAD_SOURCE_DIR})
-list(APPEND GODOT_THIRD_PARTY_LIBRARIES_INTERNAL glad)
+add_subdirectory(glad)
 
 ####################################
 #godot glslang (It's a mix of three libs)
 ####################################
 set(GLSLANG_SOURCE_DIR ${GODOT_SOURCE_ROOT_THIRDPARTY_DIR}/glslang)
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    set(GLSLANG_PLATFORM "Windows")
+else()
+    set(GLSLANG_PLATFORM "Unix")
+endif()
 set(GLSLANG_SOURCE
         ${GLSLANG_SOURCE_DIR}/glslang/MachineIndependent/attribute.cpp
         ${GLSLANG_SOURCE_DIR}/glslang/MachineIndependent/Constant.cpp
@@ -770,93 +394,15 @@ set(GLSLANG_SOURCE
         ${GLSLANG_SOURCE_DIR}/SPIRV/SpvTools.cpp
 
         #HACK - UNIX
-        ${GLSLANG_SOURCE_DIR}/glslang/OSDependent/Unix/ossource.cpp
+        ${GLSLANG_SOURCE_DIR}/glslang/OSDependent/${GLSLANG_PLATFORM}/ossource.cpp
     )
-add_library(godot-glslang STATIC ${GLSLANG_SOURCE})
+godot_add_library(godot-glslang thirdparty STATIC ${GLSLANG_SOURCE})
 target_include_directories(godot-glslang PUBLIC ${GLSLANG_SOURCE_DIR} ${GODOT_SOURCE_ROOT_THIRDPARTY_DIR})
-list(APPEND GODOT_THIRD_PARTY_LIBRARIES_INTERNAL godot-glslang)
 
 ####################################
 #graphite
 ####################################
-set(GRAPHITE_SOURCE_DIR ${GODOT_SOURCE_ROOT_THIRDPARTY_DIR}/graphite)
-set(GRAPHITE_SOURCE
-    ${GRAPHITE_SOURCE_DIR}/include/graphite2/Log.h
-    ${GRAPHITE_SOURCE_DIR}/include/graphite2/Font.h
-    ${GRAPHITE_SOURCE_DIR}/include/graphite2/Types.h
-    ${GRAPHITE_SOURCE_DIR}/include/graphite2/Segment.h
-    ${GRAPHITE_SOURCE_DIR}/src/gr_char_info.cpp
-    ${GRAPHITE_SOURCE_DIR}/src/direct_machine.cpp
-    ${GRAPHITE_SOURCE_DIR}/src/Font.cpp
-    ${GRAPHITE_SOURCE_DIR}/src/Slot.cpp
-    ${GRAPHITE_SOURCE_DIR}/src/CmapCache.cpp
-    ${GRAPHITE_SOURCE_DIR}/src/call_machine.cpp
-    ${GRAPHITE_SOURCE_DIR}/src/gr_face.cpp
-    ${GRAPHITE_SOURCE_DIR}/src/gr_slot.cpp
-    ${GRAPHITE_SOURCE_DIR}/src/FileFace.cpp
-    ${GRAPHITE_SOURCE_DIR}/src/Decompressor.cpp
-    ${GRAPHITE_SOURCE_DIR}/src/gr_font.cpp
-    ${GRAPHITE_SOURCE_DIR}/src/UtfCodec.cpp
-    ${GRAPHITE_SOURCE_DIR}/src/Face.cpp
-    ${GRAPHITE_SOURCE_DIR}/src/Intervals.cpp
-    ${GRAPHITE_SOURCE_DIR}/src/Sparse.cpp
-    ${GRAPHITE_SOURCE_DIR}/src/Collider.cpp
-    ${GRAPHITE_SOURCE_DIR}/src/TtfUtil.cpp
-    ${GRAPHITE_SOURCE_DIR}/src/Code.cpp
-    ${GRAPHITE_SOURCE_DIR}/src/GlyphFace.cpp
-    ${GRAPHITE_SOURCE_DIR}/src/gr_segment.cpp
-    ${GRAPHITE_SOURCE_DIR}/src/Pass.cpp
-    ${GRAPHITE_SOURCE_DIR}/src/inc/json.h
-    ${GRAPHITE_SOURCE_DIR}/src/inc/List.h
-    ${GRAPHITE_SOURCE_DIR}/src/inc/UtfCodec.h
-    ${GRAPHITE_SOURCE_DIR}/src/inc/NameTable.h
-    ${GRAPHITE_SOURCE_DIR}/src/inc/Compression.h
-    ${GRAPHITE_SOURCE_DIR}/src/inc/Code.h
-    ${GRAPHITE_SOURCE_DIR}/src/inc/Face.h
-    ${GRAPHITE_SOURCE_DIR}/src/inc/Font.h
-    ${GRAPHITE_SOURCE_DIR}/src/inc/Collider.h
-    ${GRAPHITE_SOURCE_DIR}/src/inc/Machine.h
-    ${GRAPHITE_SOURCE_DIR}/src/inc/Main.h
-    ${GRAPHITE_SOURCE_DIR}/src/inc/Endian.h
-    ${GRAPHITE_SOURCE_DIR}/src/inc/Decompressor.h
-    ${GRAPHITE_SOURCE_DIR}/src/inc/FileFace.h
-    ${GRAPHITE_SOURCE_DIR}/src/inc/locale2lcid.h
-    ${GRAPHITE_SOURCE_DIR}/src/inc/bits.h
-    ${GRAPHITE_SOURCE_DIR}/src/inc/GlyphFace.h
-    ${GRAPHITE_SOURCE_DIR}/src/inc/GlyphCache.h
-    ${GRAPHITE_SOURCE_DIR}/src/inc/opcode_table.h
-    ${GRAPHITE_SOURCE_DIR}/src/inc/TtfTypes.h
-    ${GRAPHITE_SOURCE_DIR}/src/inc/Error.h
-    ${GRAPHITE_SOURCE_DIR}/src/inc/CharInfo.h
-    ${GRAPHITE_SOURCE_DIR}/src/inc/opcodes.h
-    ${GRAPHITE_SOURCE_DIR}/src/inc/FeatureVal.h
-    ${GRAPHITE_SOURCE_DIR}/src/inc/Sparse.h
-    ${GRAPHITE_SOURCE_DIR}/src/inc/Pass.h
-    ${GRAPHITE_SOURCE_DIR}/src/inc/Rule.h
-    ${GRAPHITE_SOURCE_DIR}/src/inc/CmapCache.h
-    ${GRAPHITE_SOURCE_DIR}/src/inc/Position.h
-    ${GRAPHITE_SOURCE_DIR}/src/inc/Silf.h
-    ${GRAPHITE_SOURCE_DIR}/src/inc/debug.h
-    ${GRAPHITE_SOURCE_DIR}/src/inc/Intervals.h
-    ${GRAPHITE_SOURCE_DIR}/src/inc/Slot.h
-    ${GRAPHITE_SOURCE_DIR}/src/inc/FeatureMap.h
-    ${GRAPHITE_SOURCE_DIR}/src/inc/TtfUtil.h
-    ${GRAPHITE_SOURCE_DIR}/src/inc/Segment.h
-    ${GRAPHITE_SOURCE_DIR}/src/json.cpp
-    ${GRAPHITE_SOURCE_DIR}/src/Silf.cpp
-    ${GRAPHITE_SOURCE_DIR}/src/Position.cpp
-    ${GRAPHITE_SOURCE_DIR}/src/Segment.cpp
-    ${GRAPHITE_SOURCE_DIR}/src/FeatureMap.cpp
-    ${GRAPHITE_SOURCE_DIR}/src/Justifier.cpp
-    ${GRAPHITE_SOURCE_DIR}/src/gr_features.cpp
-    ${GRAPHITE_SOURCE_DIR}/src/GlyphCache.cpp
-    ${GRAPHITE_SOURCE_DIR}/src/gr_logging.cpp
-    ${GRAPHITE_SOURCE_DIR}/src/NameTable.cpp
-    )
-add_library(graphite STATIC ${GRAPHITE_SOURCE})
-target_include_directories(graphite PUBLIC ${GRAPHITE_SOURCE_DIR}/include)
-target_include_directories(graphite PRIVATE ${GRAPHITE_SOURCE_DIR}/src)
-list(APPEND GODOT_THIRD_PARTY_LIBRARIES_INTERNAL graphite)
+add_subdirectory(graphite)
 
 ####################################
 #harfbuzz
@@ -1194,480 +740,15 @@ set(HARFBUZZ_SOURCE
     ${HARFBUZZ_SOURCE_DIR}/src/hb-subset-cff1.cc
     ${HARFBUZZ_SOURCE_DIR}/src/hb-ot-shaper-hebrew.cc
     )
-add_library(harfbuzz STATIC ${HARFBUZZ_SOURCE})
+godot_add_library(harfbuzz thirdparty STATIC ${HARFBUZZ_SOURCE})
 target_include_directories(harfbuzz PUBLIC ${HARFBUZZ_SOURCE_DIR}/src)
 target_compile_definitions(harfbuzz PRIVATE HAVE_FREETYPE=1 HAVE_ICU=1)
 target_link_libraries(harfbuzz PUBLIC freetype icu4c)
-list(APPEND GODOT_THIRD_PARTY_LIBRARIES_INTERNAL harfbuzz)
 
 ####################################
 #icu4c
 ####################################
-set(GODOT_MODULES_BASE_DIR ${GODOT_ENGINE_ROOT_DIRECTORY}/modules)
-set(GODOT_MODULE_TEXT_SERVER_ADV_DIR ${GODOT_MODULES_BASE_DIR}/text_server_adv)
-set(ICU4C_SOURCE_DIR ${GODOT_SOURCE_ROOT_THIRDPARTY_DIR}/icu4c)
-set(ICU4C_SOURCE
-    #Special Godot Hack
-    ${GODOT_MODULE_TEXT_SERVER_ADV_DIR}/icu_data/icudata_stub.cpp
-
-    #Normal ICU code
-    ${ICU4C_SOURCE_DIR}/common/ustrtrns.cpp
-    ${ICU4C_SOURCE_DIR}/common/localematcher.cpp
-    ${ICU4C_SOURCE_DIR}/common/rbbisetb.h
-    ${ICU4C_SOURCE_DIR}/common/ulist.h
-    ${ICU4C_SOURCE_DIR}/common/locdistance.h
-    ${ICU4C_SOURCE_DIR}/common/uinvchar.cpp
-    ${ICU4C_SOURCE_DIR}/common/ucln_cmn.h
-    ${ICU4C_SOURCE_DIR}/common/localeprioritylist.cpp
-    ${ICU4C_SOURCE_DIR}/common/cmemory.cpp
-    ${ICU4C_SOURCE_DIR}/common/propsvec.h
-    ${ICU4C_SOURCE_DIR}/common/charstr.h
-    ${ICU4C_SOURCE_DIR}/common/ucnv_u7.cpp
-    ${ICU4C_SOURCE_DIR}/common/ulist.cpp
-    ${ICU4C_SOURCE_DIR}/common/charstr.cpp
-    ${ICU4C_SOURCE_DIR}/common/unifiedcache.cpp
-    ${ICU4C_SOURCE_DIR}/common/localebuilder.cpp
-    ${ICU4C_SOURCE_DIR}/common/locavailable.cpp
-    ${ICU4C_SOURCE_DIR}/common/uvectr32.h
-    ${ICU4C_SOURCE_DIR}/common/ubrk.cpp
-    ${ICU4C_SOURCE_DIR}/common/ureslocs.h
-    ${ICU4C_SOURCE_DIR}/common/lstmbe.cpp
-    ${ICU4C_SOURCE_DIR}/common/ubidiimp.h
-    ${ICU4C_SOURCE_DIR}/common/ucnv_err.cpp
-    ${ICU4C_SOURCE_DIR}/common/ucnv_lmb.cpp
-    ${ICU4C_SOURCE_DIR}/common/unicode/stringtriebuilder.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/simpleformatter.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/docmain.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/locdspnm.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/uset.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/ures.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/bytestream.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/uclean.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/ucasemap.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/uenum.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/utext.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/ushape.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/ucnv.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/filteredbrk.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/usetiter.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/uvernum.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/parsepos.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/caniter.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/uloc.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/utrace.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/edits.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/uidna.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/uconfig.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/resbund.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/utf16.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/stringoptions.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/udata.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/ubrk.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/ucptrie.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/errorcode.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/urename.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/dtintrv.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/locid.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/unifilt.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/utf8.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/icuplug.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/uchar.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/parseerr.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/uscript.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/bytestriebuilder.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/uobject.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/char16ptr.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/uniset.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/stringpiece.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/casemap.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/strenum.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/ucurr.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/umutablecptrie.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/ucat.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/usprep.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/symtable.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/enumset.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/ucharstriebuilder.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/brkiter.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/ucnv_err.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/uversion.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/ucpmap.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/unorm2.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/utf32.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/ustring.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/ptypes.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/ucharstrie.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/udisplaycontext.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/ucnv_cb.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/platform.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/localpointer.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/std_string.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/umisc.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/urep.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/localebuilder.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/uldnames.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/uchriter.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/idna.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/bytestrie.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/icudataver.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/schriter.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/uiter.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/utf.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/normalizer2.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/umachine.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/ubiditransform.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/localematcher.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/utypes.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/ubidi.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/unifunct.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/messagepattern.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/ustringtrie.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/dbbi.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/appendable.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/rep.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/normlzr.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/unimatch.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/rbbi.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/putil.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/unistr.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/chariter.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/unorm.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/utf_old.h
-    ${ICU4C_SOURCE_DIR}/common/unicode/ucnvsel.h
-    ${ICU4C_SOURCE_DIR}/common/lstmbe.h
-    ${ICU4C_SOURCE_DIR}/common/ucnv_bld.h
-    ${ICU4C_SOURCE_DIR}/common/putilimp.h
-    ${ICU4C_SOURCE_DIR}/common/rbbisetb.cpp
-    ${ICU4C_SOURCE_DIR}/common/brkeng.h
-    ${ICU4C_SOURCE_DIR}/common/ustring.cpp
-    ${ICU4C_SOURCE_DIR}/common/ucnv2022.cpp
-    ${ICU4C_SOURCE_DIR}/common/ustrfmt.cpp
-    ${ICU4C_SOURCE_DIR}/common/unisetspan.h
-    ${ICU4C_SOURCE_DIR}/common/filterednormalizer2.cpp
-    ${ICU4C_SOURCE_DIR}/common/bmpset.h
-    ${ICU4C_SOURCE_DIR}/common/uobject.cpp
-    ${ICU4C_SOURCE_DIR}/common/ruleiter.h
-    ${ICU4C_SOURCE_DIR}/common/ucat.cpp
-    ${ICU4C_SOURCE_DIR}/common/rbbi_cache.cpp
-    ${ICU4C_SOURCE_DIR}/common/locbased.cpp
-    ${ICU4C_SOURCE_DIR}/common/rbbi.cpp
-    ${ICU4C_SOURCE_DIR}/common/ucasemap_imp.h
-    ${ICU4C_SOURCE_DIR}/common/ucurr.cpp
-    ${ICU4C_SOURCE_DIR}/common/cwchar.h
-    ${ICU4C_SOURCE_DIR}/common/brkeng.cpp
-    ${ICU4C_SOURCE_DIR}/common/normalizer2.cpp
-    ${ICU4C_SOURCE_DIR}/common/locutil.cpp
-    ${ICU4C_SOURCE_DIR}/common/utrie2.cpp
-    ${ICU4C_SOURCE_DIR}/common/unistr_cnv.cpp
-    ${ICU4C_SOURCE_DIR}/common/loadednormalizer2impl.cpp
-    ${ICU4C_SOURCE_DIR}/common/schriter.cpp
-    ${ICU4C_SOURCE_DIR}/common/ustrcase.cpp
-    ${ICU4C_SOURCE_DIR}/common/udataswp.cpp
-    ${ICU4C_SOURCE_DIR}/common/ucptrie.cpp
-    ${ICU4C_SOURCE_DIR}/common/utypeinfo.h
-    ${ICU4C_SOURCE_DIR}/common/ushape.cpp
-    ${ICU4C_SOURCE_DIR}/common/bytestriebuilder.cpp
-    ${ICU4C_SOURCE_DIR}/common/ucnv_cnv.cpp
-    ${ICU4C_SOURCE_DIR}/common/uloc.cpp
-    ${ICU4C_SOURCE_DIR}/common/uloc_keytype.cpp
-    ${ICU4C_SOURCE_DIR}/common/uiter.cpp
-    ${ICU4C_SOURCE_DIR}/common/usc_impl.cpp
-    ${ICU4C_SOURCE_DIR}/common/edits.cpp
-    ${ICU4C_SOURCE_DIR}/common/static_unicode_sets.cpp
-    ${ICU4C_SOURCE_DIR}/common/ucharstrie.cpp
-    ${ICU4C_SOURCE_DIR}/common/norm2_nfc_data.h
-    ${ICU4C_SOURCE_DIR}/common/cstring.h
-    ${ICU4C_SOURCE_DIR}/common/ubidi.cpp
-    ${ICU4C_SOURCE_DIR}/common/ubidiln.cpp
-    ${ICU4C_SOURCE_DIR}/common/ustrcase_locale.cpp
-    ${ICU4C_SOURCE_DIR}/common/ustr_wcs.cpp
-    ${ICU4C_SOURCE_DIR}/common/ucln_cmn.cpp
-    ${ICU4C_SOURCE_DIR}/common/unifilt.cpp
-    ${ICU4C_SOURCE_DIR}/common/umath.cpp
-    ${ICU4C_SOURCE_DIR}/common/ucase_props_data.h
-    ${ICU4C_SOURCE_DIR}/common/emojiprops.cpp
-    ${ICU4C_SOURCE_DIR}/common/uassert.h
-    ${ICU4C_SOURCE_DIR}/common/sprpimpl.h
-    ${ICU4C_SOURCE_DIR}/common/utrie2_impl.h
-    ${ICU4C_SOURCE_DIR}/common/ucnvmbcs.h
-    ${ICU4C_SOURCE_DIR}/common/uinit.cpp
-    ${ICU4C_SOURCE_DIR}/common/servlkf.cpp
-    ${ICU4C_SOURCE_DIR}/common/dictionarydata.cpp
-    ${ICU4C_SOURCE_DIR}/common/uset.cpp
-    ${ICU4C_SOURCE_DIR}/common/servlk.cpp
-    ${ICU4C_SOURCE_DIR}/common/util_props.cpp
-    ${ICU4C_SOURCE_DIR}/common/ucnv_u16.cpp
-    ${ICU4C_SOURCE_DIR}/common/ucnv_u32.cpp
-    ${ICU4C_SOURCE_DIR}/common/cstr.h
-    ${ICU4C_SOURCE_DIR}/common/uts46.cpp
-    ${ICU4C_SOURCE_DIR}/common/punycode.cpp
-    ${ICU4C_SOURCE_DIR}/common/ubidiwrt.cpp
-    ${ICU4C_SOURCE_DIR}/common/ustr_cnv.cpp
-    ${ICU4C_SOURCE_DIR}/common/unames.cpp
-    ${ICU4C_SOURCE_DIR}/common/restrace.h
-    ${ICU4C_SOURCE_DIR}/common/ucnv_u8.cpp
-    ${ICU4C_SOURCE_DIR}/common/unifiedcache.h
-    ${ICU4C_SOURCE_DIR}/common/lsr.cpp
-    ${ICU4C_SOURCE_DIR}/common/ubidi_props.cpp
-    ${ICU4C_SOURCE_DIR}/common/unifunct.cpp
-    ${ICU4C_SOURCE_DIR}/common/ucnv_ext.h
-    ${ICU4C_SOURCE_DIR}/common/rbbitblb.h
-    ${ICU4C_SOURCE_DIR}/common/umapfile.cpp
-    ${ICU4C_SOURCE_DIR}/common/simpleformatter.cpp
-    ${ICU4C_SOURCE_DIR}/common/propname_data.h
-    ${ICU4C_SOURCE_DIR}/common/uprops.cpp
-    ${ICU4C_SOURCE_DIR}/common/chariter.cpp
-    ${ICU4C_SOURCE_DIR}/common/uidna.cpp
-    ${ICU4C_SOURCE_DIR}/common/ucnv_io.h
-    ${ICU4C_SOURCE_DIR}/common/rbbinode.cpp
-    ${ICU4C_SOURCE_DIR}/common/brkiter.cpp
-    ${ICU4C_SOURCE_DIR}/common/locmap.cpp
-    ${ICU4C_SOURCE_DIR}/common/servloc.h
-    ${ICU4C_SOURCE_DIR}/common/uposixdefs.h
-    ${ICU4C_SOURCE_DIR}/common/punycode.h
-    ${ICU4C_SOURCE_DIR}/common/umutex.cpp
-    ${ICU4C_SOURCE_DIR}/common/umutablecptrie.cpp
-    ${ICU4C_SOURCE_DIR}/common/dictionarydata.h
-    ${ICU4C_SOURCE_DIR}/common/rbbitblb.cpp
-    ${ICU4C_SOURCE_DIR}/common/locresdata.cpp
-    ${ICU4C_SOURCE_DIR}/common/ucol_data.h
-    ${ICU4C_SOURCE_DIR}/common/resbund.cpp
-    ${ICU4C_SOURCE_DIR}/common/locutil.h
-    ${ICU4C_SOURCE_DIR}/common/bmpset.cpp
-    ${ICU4C_SOURCE_DIR}/common/uresimp.h
-    ${ICU4C_SOURCE_DIR}/common/ucol_swp.cpp
-    ${ICU4C_SOURCE_DIR}/common/pluralmap.h
-    ${ICU4C_SOURCE_DIR}/common/cmemory.h
-    ${ICU4C_SOURCE_DIR}/common/ucasemap_titlecase_brkiter.cpp
-    ${ICU4C_SOURCE_DIR}/common/ucnv_cnv.h
-    ${ICU4C_SOURCE_DIR}/common/rbbidata.cpp
-    ${ICU4C_SOURCE_DIR}/common/uchar.cpp
-    ${ICU4C_SOURCE_DIR}/common/uset_imp.h
-    ${ICU4C_SOURCE_DIR}/common/wintz.h
-    ${ICU4C_SOURCE_DIR}/common/ubidi_props.h
-    ${ICU4C_SOURCE_DIR}/common/usprep.cpp
-    ${ICU4C_SOURCE_DIR}/common/stringpiece.cpp
-    ${ICU4C_SOURCE_DIR}/common/uresdata.cpp
-    ${ICU4C_SOURCE_DIR}/common/wintz.cpp
-    ${ICU4C_SOURCE_DIR}/common/servnotf.h
-    ${ICU4C_SOURCE_DIR}/common/ubrkimpl.h
-    ${ICU4C_SOURCE_DIR}/common/utext.cpp
-    ${ICU4C_SOURCE_DIR}/common/capi_helper.h
-    ${ICU4C_SOURCE_DIR}/common/norm2allmodes.h
-    ${ICU4C_SOURCE_DIR}/common/bytesinkutil.cpp
-    ${ICU4C_SOURCE_DIR}/common/rbbinode.h
-    ${ICU4C_SOURCE_DIR}/common/utrie.cpp
-    ${ICU4C_SOURCE_DIR}/common/utrie_swap.cpp
-    ${ICU4C_SOURCE_DIR}/common/unisetspan.cpp
-    ${ICU4C_SOURCE_DIR}/common/ucnv_cb.cpp
-    ${ICU4C_SOURCE_DIR}/common/restrace.cpp
-    ${ICU4C_SOURCE_DIR}/common/localeprioritylist.h
-    ${ICU4C_SOURCE_DIR}/common/unorm.cpp
-    ${ICU4C_SOURCE_DIR}/common/ubiditransform.cpp
-    ${ICU4C_SOURCE_DIR}/common/bytestrieiterator.cpp
-    ${ICU4C_SOURCE_DIR}/common/ucnvbocu.cpp
-    ${ICU4C_SOURCE_DIR}/common/uvector.cpp
-    ${ICU4C_SOURCE_DIR}/common/locid.cpp
-    ${ICU4C_SOURCE_DIR}/common/ucnvscsu.cpp
-    ${ICU4C_SOURCE_DIR}/common/ucnv_ext.cpp
-    ${ICU4C_SOURCE_DIR}/common/uhash_us.cpp
-    ${ICU4C_SOURCE_DIR}/common/cpputils.h
-    ${ICU4C_SOURCE_DIR}/common/ucharstriebuilder.cpp
-    ${ICU4C_SOURCE_DIR}/common/uresbund.cpp
-    ${ICU4C_SOURCE_DIR}/common/hash.h
-    ${ICU4C_SOURCE_DIR}/common/messageimpl.h
-    ${ICU4C_SOURCE_DIR}/common/ucnv_io.cpp
-    ${ICU4C_SOURCE_DIR}/common/ucnvdisp.cpp
-    ${ICU4C_SOURCE_DIR}/common/ucnv_imp.h
-    ${ICU4C_SOURCE_DIR}/common/mutex.h
-    ${ICU4C_SOURCE_DIR}/common/locdistance.cpp
-    ${ICU4C_SOURCE_DIR}/common/resbund_cnv.cpp
-    ${ICU4C_SOURCE_DIR}/common/uniset.cpp
-    ${ICU4C_SOURCE_DIR}/common/uvectr32.cpp
-    ${ICU4C_SOURCE_DIR}/common/rbbiscan.cpp
-    ${ICU4C_SOURCE_DIR}/common/bytesinkutil.h
-    ${ICU4C_SOURCE_DIR}/common/unistr_case_locale.cpp
-    ${ICU4C_SOURCE_DIR}/common/ucnvhz.cpp
-    ${ICU4C_SOURCE_DIR}/common/ucnv.cpp
-    ${ICU4C_SOURCE_DIR}/common/utrie2.h
-    ${ICU4C_SOURCE_DIR}/common/servrbf.cpp
-    ${ICU4C_SOURCE_DIR}/common/characterproperties.cpp
-    ${ICU4C_SOURCE_DIR}/common/pluralmap.cpp
-    ${ICU4C_SOURCE_DIR}/common/ucurrimp.h
-    ${ICU4C_SOURCE_DIR}/common/ulocimp.h
-    ${ICU4C_SOURCE_DIR}/common/uscript.cpp
-    ${ICU4C_SOURCE_DIR}/common/loclikelysubtags.h
-    ${ICU4C_SOURCE_DIR}/common/ucnv_bld.cpp
-    ${ICU4C_SOURCE_DIR}/common/utrie.h
-    ${ICU4C_SOURCE_DIR}/common/ustrenum.h
-    ${ICU4C_SOURCE_DIR}/common/charstrmap.h
-    ${ICU4C_SOURCE_DIR}/common/rbbirb.cpp
-    ${ICU4C_SOURCE_DIR}/common/propname.h
-    ${ICU4C_SOURCE_DIR}/common/ustrenum.cpp
-    ${ICU4C_SOURCE_DIR}/common/ucnv_ct.cpp
-    ${ICU4C_SOURCE_DIR}/common/sharedobject.cpp
-    ${ICU4C_SOURCE_DIR}/common/unistr_props.cpp
-    ${ICU4C_SOURCE_DIR}/common/ucln_imp.h
-    ${ICU4C_SOURCE_DIR}/common/unormcmp.cpp
-    ${ICU4C_SOURCE_DIR}/common/lsr.h
-    ${ICU4C_SOURCE_DIR}/common/filteredbrk.cpp
-    ${ICU4C_SOURCE_DIR}/common/ucharstrieiterator.cpp
-    ${ICU4C_SOURCE_DIR}/common/uvectr64.h
-    ${ICU4C_SOURCE_DIR}/common/rbbi_cache.h
-    ${ICU4C_SOURCE_DIR}/common/rbbirb.h
-    ${ICU4C_SOURCE_DIR}/common/ustr_imp.h
-    ${ICU4C_SOURCE_DIR}/common/utrie2_builder.cpp
-    ${ICU4C_SOURCE_DIR}/common/icudataver.cpp
-    ${ICU4C_SOURCE_DIR}/common/ustr_titlecase_brkiter.cpp
-    ${ICU4C_SOURCE_DIR}/common/uset_props.cpp
-    ${ICU4C_SOURCE_DIR}/common/caniter.cpp
-    ${ICU4C_SOURCE_DIR}/common/bytestream.cpp
-    ${ICU4C_SOURCE_DIR}/common/utrace.cpp
-    ${ICU4C_SOURCE_DIR}/common/ruleiter.cpp
-    ${ICU4C_SOURCE_DIR}/common/rbbidata.h
-    ${ICU4C_SOURCE_DIR}/common/localefallback_data.h
-    ${ICU4C_SOURCE_DIR}/common/serv.h
-    ${ICU4C_SOURCE_DIR}/common/uinvchar.h
-    ${ICU4C_SOURCE_DIR}/common/patternprops.h
-    ${ICU4C_SOURCE_DIR}/common/static_unicode_sets.h
-    ${ICU4C_SOURCE_DIR}/common/errorcode.cpp
-    ${ICU4C_SOURCE_DIR}/common/utypes.cpp
-    ${ICU4C_SOURCE_DIR}/common/util.h
-    ${ICU4C_SOURCE_DIR}/common/ucnvsel.cpp
-    ${ICU4C_SOURCE_DIR}/common/stringtriebuilder.cpp
-    ${ICU4C_SOURCE_DIR}/common/icuplug.cpp
-    ${ICU4C_SOURCE_DIR}/common/ucase.cpp
-    ${ICU4C_SOURCE_DIR}/common/udatamem.cpp
-    ${ICU4C_SOURCE_DIR}/common/ucnvisci.cpp
-    ${ICU4C_SOURCE_DIR}/common/ucnv_set.cpp
-    ${ICU4C_SOURCE_DIR}/common/normalizer2impl.h
-    ${ICU4C_SOURCE_DIR}/common/servslkf.cpp
-    ${ICU4C_SOURCE_DIR}/common/unistrappender.h
-    ${ICU4C_SOURCE_DIR}/common/dictbe.cpp
-    ${ICU4C_SOURCE_DIR}/common/uniquecharstr.h
-    ${ICU4C_SOURCE_DIR}/common/emojiprops.h
-    ${ICU4C_SOURCE_DIR}/common/uelement.h
-    ${ICU4C_SOURCE_DIR}/common/util.cpp
-    ${ICU4C_SOURCE_DIR}/common/uarrsort.cpp
-    ${ICU4C_SOURCE_DIR}/common/ucnvlat1.cpp
-    ${ICU4C_SOURCE_DIR}/common/uchar_props_data.h
-    ${ICU4C_SOURCE_DIR}/common/servls.cpp
-    ${ICU4C_SOURCE_DIR}/common/locbased.h
-    ${ICU4C_SOURCE_DIR}/common/cstr.cpp
-    ${ICU4C_SOURCE_DIR}/common/propname.cpp
-    ${ICU4C_SOURCE_DIR}/common/ulayout_props.h
-    ${ICU4C_SOURCE_DIR}/common/uscript_props.cpp
-    ${ICU4C_SOURCE_DIR}/common/cwchar.cpp
-    ${ICU4C_SOURCE_DIR}/common/localsvc.h
-    ${ICU4C_SOURCE_DIR}/common/unistr_titlecase_brkiter.cpp
-    ${ICU4C_SOURCE_DIR}/common/usetiter.cpp
-    ${ICU4C_SOURCE_DIR}/common/appendable.cpp
-    ${ICU4C_SOURCE_DIR}/common/parsepos.cpp
-    ${ICU4C_SOURCE_DIR}/common/usc_impl.h
-    ${ICU4C_SOURCE_DIR}/common/uresdata.h
-    ${ICU4C_SOURCE_DIR}/common/ucasemap.cpp
-    ${ICU4C_SOURCE_DIR}/common/unistr.cpp
-    ${ICU4C_SOURCE_DIR}/common/udatamem.h
-    ${ICU4C_SOURCE_DIR}/common/uniset_closure.cpp
-    ${ICU4C_SOURCE_DIR}/common/ures_cnv.cpp
-    ${ICU4C_SOURCE_DIR}/common/ucase.h
-    ${ICU4C_SOURCE_DIR}/common/uchriter.cpp
-    ${ICU4C_SOURCE_DIR}/common/uenumimp.h
-    ${ICU4C_SOURCE_DIR}/common/serv.cpp
-    ${ICU4C_SOURCE_DIR}/common/dtintrv.cpp
-    ${ICU4C_SOURCE_DIR}/common/bytestrie.cpp
-    ${ICU4C_SOURCE_DIR}/common/locdspnm.cpp
-    ${ICU4C_SOURCE_DIR}/common/rbbirpt.h
-    ${ICU4C_SOURCE_DIR}/common/uvector.h
-    ${ICU4C_SOURCE_DIR}/common/resource.cpp
-    ${ICU4C_SOURCE_DIR}/common/unormimp.h
-    ${ICU4C_SOURCE_DIR}/common/uvectr64.cpp
-    ${ICU4C_SOURCE_DIR}/common/loclikely.cpp
-    ${ICU4C_SOURCE_DIR}/common/putil.cpp
-    ${ICU4C_SOURCE_DIR}/common/ucol_swp.h
-    ${ICU4C_SOURCE_DIR}/common/messagepattern.cpp
-    ${ICU4C_SOURCE_DIR}/common/dictbe.h
-    ${ICU4C_SOURCE_DIR}/common/utf_impl.cpp
-    ${ICU4C_SOURCE_DIR}/common/ucnvmbcs.cpp
-    ${ICU4C_SOURCE_DIR}/common/ucmndata.cpp
-    ${ICU4C_SOURCE_DIR}/common/uarrsort.h
-    ${ICU4C_SOURCE_DIR}/common/udataswp.h
-    ${ICU4C_SOURCE_DIR}/common/sharedobject.h
-    ${ICU4C_SOURCE_DIR}/common/ucptrie_impl.h
-    ${ICU4C_SOURCE_DIR}/common/umutex.h
-    ${ICU4C_SOURCE_DIR}/common/uhash.h
-    ${ICU4C_SOURCE_DIR}/common/ustrfmt.h
-    ${ICU4C_SOURCE_DIR}/common/locmap.h
-    ${ICU4C_SOURCE_DIR}/common/resource.h
-    ${ICU4C_SOURCE_DIR}/common/uloc_tag.cpp
-    ${ICU4C_SOURCE_DIR}/common/ustr_cnv.h
-    ${ICU4C_SOURCE_DIR}/common/utracimp.h
-    ${ICU4C_SOURCE_DIR}/common/rbbiscan.h
-    ${ICU4C_SOURCE_DIR}/common/uniset_props.cpp
-    ${ICU4C_SOURCE_DIR}/common/msvcres.h
-    ${ICU4C_SOURCE_DIR}/common/unistr_case.cpp
-    ${ICU4C_SOURCE_DIR}/common/uhash.cpp
-    ${ICU4C_SOURCE_DIR}/common/normalizer2impl.cpp
-    ${ICU4C_SOURCE_DIR}/common/udata.cpp
-    ${ICU4C_SOURCE_DIR}/common/rbbistbl.cpp
-    ${ICU4C_SOURCE_DIR}/common/uprops.h
-    ${ICU4C_SOURCE_DIR}/common/loclikelysubtags.cpp
-    ${ICU4C_SOURCE_DIR}/common/uenum.cpp
-    ${ICU4C_SOURCE_DIR}/common/normlzr.cpp
-    ${ICU4C_SOURCE_DIR}/common/ustack.cpp
-    ${ICU4C_SOURCE_DIR}/common/ucln.h
-    ${ICU4C_SOURCE_DIR}/common/icuplugimp.h
-    ${ICU4C_SOURCE_DIR}/common/cstring.cpp
-    ${ICU4C_SOURCE_DIR}/common/ubidi_props_data.h
-    ${ICU4C_SOURCE_DIR}/common/locdispnames.cpp
-    ${ICU4C_SOURCE_DIR}/common/propsvec.cpp
-    ${ICU4C_SOURCE_DIR}/common/patternprops.cpp
-    ${ICU4C_SOURCE_DIR}/common/ucmndata.h
-    ${ICU4C_SOURCE_DIR}/common/servnotf.cpp
-    ${ICU4C_SOURCE_DIR}/common/umapfile.h
-    ${ICU4C_SOURCE_DIR}/i18n/uspoof_impl.cpp
-    ${ICU4C_SOURCE_DIR}/i18n/unicode/uspoof.h
-    ${ICU4C_SOURCE_DIR}/i18n/ucln_in.h
-    ${ICU4C_SOURCE_DIR}/i18n/uspoof_impl.h
-    ${ICU4C_SOURCE_DIR}/i18n/scriptset.h
-    ${ICU4C_SOURCE_DIR}/i18n/scriptset.cpp
-    ${ICU4C_SOURCE_DIR}/i18n/uspoof.cpp
-    ${ICU4C_SOURCE_DIR}/i18n/ucln_in.cpp
-    )
-add_library(icu4c STATIC ${ICU4C_SOURCE})
-target_include_directories(icu4c PUBLIC ${ICU4C_SOURCE_DIR}/common)
-target_compile_definitions(icu4c PUBLIC 
-            "-DU_STATIC_IMPLEMENTATION"
-            "-DU_COMMON_IMPLEMENTATION"
-            "-DUCONFIG_NO_COLLATION"
-            "-DUCONFIG_NO_CONVERSION"
-            "-DUCONFIG_NO_FORMATTING"
-            "-DUCONFIG_NO_SERVICE"
-            "-DUCONFIG_NO_IDNA"
-            "-DUCONFIG_NO_FILE_IO"
-            "-DUCONFIG_NO_TRANSLITERATION"
-            "-DUCONFIG_NO_REGULAR_EXPRESSIONS"
-            "-DPKGDATA_MODE=static"
-            "-DU_ENABLE_DYLOAD=0"
-            "-DU_HAVE_LIB_SUFFIX=1"
-            "-DU_LIB_SUFFIX_C_NAME=_godot"
-            "-DICU_DATA_NAME=icudt72l.dat")
-list(APPEND GODOT_THIRD_PARTY_LIBRARIES_INTERNAL icu4c)
-
-####################################
-#jpgs-compressor
-####################################
-set(JPEG_COMPRESSOR_SOURCE_DIR ${GODOT_SOURCE_ROOT_THIRDPARTY_DIR}/jpeg-compressor)
-set(JPEG_COMPRESSOR_SOURCE
-    ${JPEG_COMPRESSOR_SOURCE_DIR}/jpgd.cpp
-    ${JPEG_COMPRESSOR_SOURCE_DIR}/jpgd.h
-    ${JPEG_COMPRESSOR_SOURCE_DIR}/jpgd_idct.h
-    ${JPEG_COMPRESSOR_SOURCE_DIR}/jpge.cpp
-    ${JPEG_COMPRESSOR_SOURCE_DIR}/jpge.h
-    )
-add_library(jpeg-compressor STATIC ${JPEG_COMPRESSOR_SOURCE})
-target_include_directories(jpeg-compressor PUBLIC ${JPEG_COMPRESSOR_SOURCE_DIR})
-list(APPEND GODOT_THIRD_PARTY_LIBRARIES_INTERNAL jpeg-compressor)
+add_subdirectory(icu4c)
 
 ####################################
 #libogg
@@ -1681,9 +762,8 @@ set(LIBOGG_SOURCE
     ${LIBOGG_SOURCE_DIR}/ogg/os_types.h
     ${LIBOGG_SOURCE_DIR}/ogg/ogg.h
     )
-add_library(ogg STATIC ${LIBOGG_SOURCE})
+godot_add_library(ogg thirdparty STATIC ${LIBOGG_SOURCE})
 target_include_directories(ogg PUBLIC ${LIBOGG_SOURCE_DIR})
-list(APPEND GODOT_THIRD_PARTY_LIBRARIES_INTERNAL ogg)
 
 ####################################
 #libpng
@@ -1717,98 +797,14 @@ set(LIBPNG_SOURCE
     ${LIBPNG_SOURCE_DIR}/pngwtran.c
     ${LIBPNG_SOURCE_DIR}/pngwutil.c
     )
-add_library(png STATIC ${LIBPNG_SOURCE})
-list(APPEND GODOT_THIRD_PARTY_LIBRARIES_INTERNAL png)
+godot_add_library(png thirdparty STATIC ${LIBPNG_SOURCE})
+target_include_directories(png PUBLIC ${LIBPNG_SOURCE_DIR})
+target_link_libraries(png PUBLIC zlib)
 
 ####################################
 #libtheora
 ####################################
-set(LIBTHEORA_SOURCE_DIR ${GODOT_SOURCE_ROOT_THIRDPARTY_DIR}/libtheora)
-set(LIBTHEORA_SOURCE
-    ${LIBTHEORA_SOURCE_DIR}/analyze.c
-    ${LIBTHEORA_SOURCE_DIR}/apiwrapper.c
-    ${LIBTHEORA_SOURCE_DIR}/apiwrapper.h
-    ${LIBTHEORA_SOURCE_DIR}/bitpack.c
-    ${LIBTHEORA_SOURCE_DIR}/bitpack.h
-    ${LIBTHEORA_SOURCE_DIR}/collect.c
-    ${LIBTHEORA_SOURCE_DIR}/collect.h
-    ${LIBTHEORA_SOURCE_DIR}/dct.h
-    ${LIBTHEORA_SOURCE_DIR}/decapiwrapper.c
-    ${LIBTHEORA_SOURCE_DIR}/decinfo.c
-    ${LIBTHEORA_SOURCE_DIR}/decint.h
-    ${LIBTHEORA_SOURCE_DIR}/decode.c
-    ${LIBTHEORA_SOURCE_DIR}/dequant.c
-    ${LIBTHEORA_SOURCE_DIR}/dequant.h
-    ${LIBTHEORA_SOURCE_DIR}/encapiwrapper.c
-    ${LIBTHEORA_SOURCE_DIR}/encfrag.c
-    ${LIBTHEORA_SOURCE_DIR}/encinfo.c
-    ${LIBTHEORA_SOURCE_DIR}/encint.h
-    ${LIBTHEORA_SOURCE_DIR}/encode.c
-    ${LIBTHEORA_SOURCE_DIR}/encoder_disabled.c
-    ${LIBTHEORA_SOURCE_DIR}/enquant.c
-    ${LIBTHEORA_SOURCE_DIR}/enquant.h
-    ${LIBTHEORA_SOURCE_DIR}/fdct.c
-    ${LIBTHEORA_SOURCE_DIR}/fragment.c
-    ${LIBTHEORA_SOURCE_DIR}/huffdec.c
-    ${LIBTHEORA_SOURCE_DIR}/huffdec.h
-    ${LIBTHEORA_SOURCE_DIR}/huffenc.c
-    ${LIBTHEORA_SOURCE_DIR}/huffenc.h
-    ${LIBTHEORA_SOURCE_DIR}/huffman.h
-    ${LIBTHEORA_SOURCE_DIR}/idct.c
-    ${LIBTHEORA_SOURCE_DIR}/info.c
-    ${LIBTHEORA_SOURCE_DIR}/internal.c
-    ${LIBTHEORA_SOURCE_DIR}/internal.h
-    ${LIBTHEORA_SOURCE_DIR}/mathops.c
-    ${LIBTHEORA_SOURCE_DIR}/mathops.h
-    ${LIBTHEORA_SOURCE_DIR}/mcenc.c
-    ${LIBTHEORA_SOURCE_DIR}/modedec.h
-    ${LIBTHEORA_SOURCE_DIR}/ocintrin.h
-    ${LIBTHEORA_SOURCE_DIR}/quant.c
-    ${LIBTHEORA_SOURCE_DIR}/quant.h
-    ${LIBTHEORA_SOURCE_DIR}/rate.c
-    ${LIBTHEORA_SOURCE_DIR}/state.c
-    ${LIBTHEORA_SOURCE_DIR}/state.h
-    ${LIBTHEORA_SOURCE_DIR}/theora/theoradec.h
-    ${LIBTHEORA_SOURCE_DIR}/theora/codec.h
-    ${LIBTHEORA_SOURCE_DIR}/theora/theora.h
-    ${LIBTHEORA_SOURCE_DIR}/theora/theoraenc.h
-    ${LIBTHEORA_SOURCE_DIR}/tokenize.c
-    ${LIBTHEORA_SOURCE_DIR}/x86/mmxfdct.c
-    ${LIBTHEORA_SOURCE_DIR}/x86/x86int.h
-    ${LIBTHEORA_SOURCE_DIR}/x86/x86enquant.c
-    ${LIBTHEORA_SOURCE_DIR}/x86/x86state.c
-    ${LIBTHEORA_SOURCE_DIR}/x86/x86enc.c
-    ${LIBTHEORA_SOURCE_DIR}/x86/mmxstate.c
-    ${LIBTHEORA_SOURCE_DIR}/x86/mmxencfrag.c
-    ${LIBTHEORA_SOURCE_DIR}/x86/x86enc.h
-    ${LIBTHEORA_SOURCE_DIR}/x86/sse2trans.h
-    ${LIBTHEORA_SOURCE_DIR}/x86/x86cpu.h
-    ${LIBTHEORA_SOURCE_DIR}/x86/mmxfrag.c
-    ${LIBTHEORA_SOURCE_DIR}/x86/x86zigzag.h
-    ${LIBTHEORA_SOURCE_DIR}/x86/sse2fdct.c
-    ${LIBTHEORA_SOURCE_DIR}/x86/mmxloop.h
-    ${LIBTHEORA_SOURCE_DIR}/x86/sse2encfrag.c
-    ${LIBTHEORA_SOURCE_DIR}/x86/mmxidct.c
-    ${LIBTHEORA_SOURCE_DIR}/x86/x86cpu.c
-    ${LIBTHEORA_SOURCE_DIR}/x86/sse2idct.c
-    # ${LIBTHEORA_SOURCE_DIR}/x86_vc/mmxfdct.c
-    # ${LIBTHEORA_SOURCE_DIR}/x86_vc/x86int.h
-    # ${LIBTHEORA_SOURCE_DIR}/x86_vc/x86state.c
-    # ${LIBTHEORA_SOURCE_DIR}/x86_vc/x86enc.c
-    # ${LIBTHEORA_SOURCE_DIR}/x86_vc/mmxstate.c
-    # ${LIBTHEORA_SOURCE_DIR}/x86_vc/mmxencfrag.c
-    # ${LIBTHEORA_SOURCE_DIR}/x86_vc/x86enc.h
-    # ${LIBTHEORA_SOURCE_DIR}/x86_vc/x86cpu.h
-    # ${LIBTHEORA_SOURCE_DIR}/x86_vc/mmxfrag.c
-    # ${LIBTHEORA_SOURCE_DIR}/x86_vc/x86zigzag.h
-    # ${LIBTHEORA_SOURCE_DIR}/x86_vc/mmxloop.h
-    # ${LIBTHEORA_SOURCE_DIR}/x86_vc/mmxidct.c
-    # ${LIBTHEORA_SOURCE_DIR}/x86_vc/x86cpu.c
-    )
-add_library(theora STATIC ${LIBTHEORA_SOURCE})
-target_include_directories(theora PUBLIC ${LIBTHEORA_SOURCE_DIR})
-target_link_libraries(theora PUBLIC ogg)
-list(APPEND GODOT_THIRD_PARTY_LIBRARIES_INTERNAL theora)
+add_subdirectory(libtheora)
 
 ####################################
 #libvorbis
@@ -1887,10 +883,9 @@ set(LIBVORBIS_SOURCE
     ${LIBVORBIS_SOURCE_DIR}/window.c
     ${LIBVORBIS_SOURCE_DIR}/window.h
     )
-add_library(vorbis STATIC ${LIBVORBIS_SOURCE})
+godot_add_library(vorbis thirdparty STATIC ${LIBVORBIS_SOURCE})
 target_link_libraries(vorbis PUBLIC ogg)
 target_include_directories(vorbis PUBLIC ${LIBVORBIS_SOURCE_DIR})
-list(APPEND GODOT_THIRD_PARTY_LIBRARIES_INTERNAL vorbis)
 
 ####################################
 #libwebp
@@ -2068,10 +1063,9 @@ set(LIBWEBP_SOURCE
     ${LIBWEBP_SOURCE_DIR}/src/dsp/alpha_processing_mips_dsp_r2.c
     ${LIBWEBP_SOURCE_DIR}/src/dsp/cost_mips32.c
     )
-add_library(webp STATIC ${LIBWEBP_SOURCE})
+godot_add_library(webp thirdparty STATIC ${LIBWEBP_SOURCE})
 target_include_directories(webp PRIVATE ${LIBWEBP_SOURCE_DIR})
 target_include_directories(webp PUBLIC ${LIBWEBP_SOURCE_DIR}/src)
-list(APPEND GODOT_THIRD_PARTY_LIBRARIES_INTERNAL webp)
 
 ####################################
 #linuxbsd_headers
@@ -2212,192 +1206,12 @@ set(LINUX_BSD_SOURCE
     ${LINUX_BSD_SOURCE_DIR}/xkbcommon/xkbcommon-compat.h
     ${LINUX_BSD_SOURCE_DIR}/xkbcommon/xkbcommon-compose.h
     )
-add_library(linuxbsd-headers INTERFACE ${LINUX_BSD_SOURCE})
-list(APPEND GODOT_THIRD_PARTY_LIBRARIES_INTERNAL linuxbsd-headers)
+godot_add_library(linuxbsd-headers thirdparty INTERFACE ${LINUX_BSD_SOURCE})
 
 ####################################
 #mbedtls
 ####################################
-set(MBEDTLS_SOURCE_DIR ${GODOT_SOURCE_ROOT_THIRDPARTY_DIR}/mbedtls)
-set(MBEDTLS_SOURCE
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/ecdh.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/entropy.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/net_sockets.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/blowfish.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/x509.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/asn1.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/ctr_drbg.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/version.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/md5.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/sha512.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/havege.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/compat-1.3.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/md_internal.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/ssl.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/xtea.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/entropy_poll.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/timing.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/x509_crt.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/pkcs5.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/bn_mul.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/sha256.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/camellia.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/error.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/ssl_cookie.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/pkcs12.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/rsa_internal.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/gcm.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/cipher_internal.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/ecjpake.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/dhm.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/net.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/config.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/platform_time.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/poly1305.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/md.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/nist_kw.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/rsa.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/certs.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/ecdsa.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/cipher.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/ssl_cache.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/ecp.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/pk_internal.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/padlock.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/aria.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/aes.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/base64.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/pkcs11.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/constant_time.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/asn1write.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/chacha20.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/hmac_drbg.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/des.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/ccm.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/platform.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/md2.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/ssl_internal.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/memory_buffer_alloc.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/sha1.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/aesni.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/threading.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/check_config.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/chachapoly.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/x509_csr.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/ssl_ticket.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/ssl_ciphersuites.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/ecp_internal.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/ripemd160.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/debug.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/md4.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/pk.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/bignum.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/hkdf.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/arc4.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/oid.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/platform_util.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/pem.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/x509_crl.h
-    ${MBEDTLS_SOURCE_DIR}/include/mbedtls/cmac.h
-    ${MBEDTLS_SOURCE_DIR}/include/godot_core_mbedtls_config.h
-    ${MBEDTLS_SOURCE_DIR}/library/des.c
-    ${MBEDTLS_SOURCE_DIR}/library/ssl_cli.c
-    ${MBEDTLS_SOURCE_DIR}/library/xtea.c
-    ${MBEDTLS_SOURCE_DIR}/library/asn1write.c
-    ${MBEDTLS_SOURCE_DIR}/library/ccm.c
-    ${MBEDTLS_SOURCE_DIR}/library/md4.c
-    ${MBEDTLS_SOURCE_DIR}/library/ecdh.c
-    ${MBEDTLS_SOURCE_DIR}/library/mps_error.h
-    ${MBEDTLS_SOURCE_DIR}/library/platform.c
-    ${MBEDTLS_SOURCE_DIR}/library/havege.c
-    ${MBEDTLS_SOURCE_DIR}/library/version.c
-    ${MBEDTLS_SOURCE_DIR}/library/ecp_curves.c
-    ${MBEDTLS_SOURCE_DIR}/library/entropy.c
-    ${MBEDTLS_SOURCE_DIR}/library/sha256.c
-    ${MBEDTLS_SOURCE_DIR}/library/blowfish.c
-    ${MBEDTLS_SOURCE_DIR}/library/base64.c
-    ${MBEDTLS_SOURCE_DIR}/library/ecdsa.c
-    ${MBEDTLS_SOURCE_DIR}/library/debug.c
-    ${MBEDTLS_SOURCE_DIR}/library/ssl_cache.c
-    ${MBEDTLS_SOURCE_DIR}/library/pkparse.c
-    ${MBEDTLS_SOURCE_DIR}/library/pkwrite.c
-    ${MBEDTLS_SOURCE_DIR}/library/padlock.c
-    ${MBEDTLS_SOURCE_DIR}/library/net_sockets.c
-    ${MBEDTLS_SOURCE_DIR}/library/mps_reader.c
-    ${MBEDTLS_SOURCE_DIR}/library/aes.c
-    ${MBEDTLS_SOURCE_DIR}/library/common.h
-    ${MBEDTLS_SOURCE_DIR}/library/hkdf.c
-    ${MBEDTLS_SOURCE_DIR}/library/x509_crl.c
-    ${MBEDTLS_SOURCE_DIR}/library/ssl_srv.c
-    ${MBEDTLS_SOURCE_DIR}/library/pkcs12.c
-    ${MBEDTLS_SOURCE_DIR}/library/bignum.c
-    ${MBEDTLS_SOURCE_DIR}/library/cmac.c
-    ${MBEDTLS_SOURCE_DIR}/library/ecp_invasive.h
-    ${MBEDTLS_SOURCE_DIR}/library/mps_trace.h
-    ${MBEDTLS_SOURCE_DIR}/library/md5.c
-    ${MBEDTLS_SOURCE_DIR}/library/pk_wrap.c
-    ${MBEDTLS_SOURCE_DIR}/library/x509_crt.c
-    ${MBEDTLS_SOURCE_DIR}/library/ssl_tls13_keys.h
-    ${MBEDTLS_SOURCE_DIR}/library/gcm.c
-    ${MBEDTLS_SOURCE_DIR}/library/x509_create.c
-    ${MBEDTLS_SOURCE_DIR}/library/pkcs11.c
-    ${MBEDTLS_SOURCE_DIR}/library/x509write_csr.c
-    ${MBEDTLS_SOURCE_DIR}/library/x509.c
-    ${MBEDTLS_SOURCE_DIR}/library/version_features.c
-    ${MBEDTLS_SOURCE_DIR}/library/chachapoly.c
-    ${MBEDTLS_SOURCE_DIR}/library/mps_common.h
-    ${MBEDTLS_SOURCE_DIR}/library/hmac_drbg.c
-    ${MBEDTLS_SOURCE_DIR}/library/nist_kw.c
-    ${MBEDTLS_SOURCE_DIR}/library/check_crypto_config.h
-    ${MBEDTLS_SOURCE_DIR}/library/mps_trace.c
-    ${MBEDTLS_SOURCE_DIR}/library/ssl_ticket.c
-    ${MBEDTLS_SOURCE_DIR}/library/rsa_internal.c
-    ${MBEDTLS_SOURCE_DIR}/library/cipher.c
-    ${MBEDTLS_SOURCE_DIR}/library/error.c
-    ${MBEDTLS_SOURCE_DIR}/library/pkcs5.c
-    ${MBEDTLS_SOURCE_DIR}/library/rsa.c
-    ${MBEDTLS_SOURCE_DIR}/library/platform_util.c
-    ${MBEDTLS_SOURCE_DIR}/library/pk.c
-    ${MBEDTLS_SOURCE_DIR}/library/timing.c
-    ${MBEDTLS_SOURCE_DIR}/library/aesni.c
-    ${MBEDTLS_SOURCE_DIR}/library/mps_reader.h
-    ${MBEDTLS_SOURCE_DIR}/library/sha512.c
-    ${MBEDTLS_SOURCE_DIR}/library/ripemd160.c
-    ${MBEDTLS_SOURCE_DIR}/library/asn1parse.c
-    ${MBEDTLS_SOURCE_DIR}/library/ssl_tls13_keys.c
-    ${MBEDTLS_SOURCE_DIR}/library/memory_buffer_alloc.c
-    ${MBEDTLS_SOURCE_DIR}/library/ssl_msg.c
-    ${MBEDTLS_SOURCE_DIR}/library/camellia.c
-    ${MBEDTLS_SOURCE_DIR}/library/aria.c
-    ${MBEDTLS_SOURCE_DIR}/library/cipher_wrap.c
-    ${MBEDTLS_SOURCE_DIR}/library/md2.c
-    ${MBEDTLS_SOURCE_DIR}/library/godot_core_mbedtls_platform.c
-    ${MBEDTLS_SOURCE_DIR}/library/dhm.c
-    ${MBEDTLS_SOURCE_DIR}/library/ecp.c
-    ${MBEDTLS_SOURCE_DIR}/library/x509_csr.c
-    ${MBEDTLS_SOURCE_DIR}/library/entropy_poll.c
-    ${MBEDTLS_SOURCE_DIR}/library/sha1.c
-    ${MBEDTLS_SOURCE_DIR}/library/constant_time_internal.h
-    ${MBEDTLS_SOURCE_DIR}/library/ssl_tls.c
-    ${MBEDTLS_SOURCE_DIR}/library/pem.c
-    ${MBEDTLS_SOURCE_DIR}/library/threading.c
-    ${MBEDTLS_SOURCE_DIR}/library/ecjpake.c
-    ${MBEDTLS_SOURCE_DIR}/library/md.c
-    ${MBEDTLS_SOURCE_DIR}/library/poly1305.c
-    ${MBEDTLS_SOURCE_DIR}/library/constant_time.c
-    ${MBEDTLS_SOURCE_DIR}/library/chacha20.c
-    ${MBEDTLS_SOURCE_DIR}/library/ctr_drbg.c
-    ${MBEDTLS_SOURCE_DIR}/library/x509write_crt.c
-    ${MBEDTLS_SOURCE_DIR}/library/ssl_cookie.c
-    ${MBEDTLS_SOURCE_DIR}/library/oid.c
-    ${MBEDTLS_SOURCE_DIR}/library/ssl_ciphersuites.c
-    ${MBEDTLS_SOURCE_DIR}/library/constant_time_invasive.h
-    ${MBEDTLS_SOURCE_DIR}/library/certs.c
-    ${MBEDTLS_SOURCE_DIR}/library/arc4.c
-    )
-add_library(mbedtls STATIC ${MBEDTLS_SOURCE})
-target_include_directories(mbedtls PUBLIC ${MBEDTLS_SOURCE_DIR}/include)
-list(APPEND GODOT_THIRD_PARTY_LIBRARIES_INTERNAL mbedtls)
+add_subdirectory(mbedtls)
 
 ####################################
 #meshoptimizer
@@ -2421,8 +1235,7 @@ set(MESHOPTIMIZER_SOURCE
     ${MESHOPTIMIZER_SOURCE_DIR}/vfetchanalyzer.cpp
     ${MESHOPTIMIZER_SOURCE_DIR}/vfetchoptimizer.cpp
     )
-add_library(meshoptimizer STATIC ${MESHOPTIMIZER_SOURCE})
-list(APPEND GODOT_THIRD_PARTY_LIBRARIES_INTERNAL meshoptimizer)
+godot_add_library(meshoptimizer thirdparty STATIC ${MESHOPTIMIZER_SOURCE})
 
 ####################################
 #minimp3
@@ -2432,54 +1245,13 @@ set(MINIMP3_SOURCE
     ${MINIMP3_SOURCE_DIR}/minimp3_ex.h
     ${MINIMP3_SOURCE_DIR}/minimp3.h
     )
-add_library(minimp3 INTERFACE ${MINIMP3_SOURCE})
+godot_add_library(minimp3 thirdparty INTERFACE ${MINIMP3_SOURCE})
 target_include_directories(minimp3 INTERFACE ${MINIMP3_SOURCE_DIR})
-list(APPEND GODOT_THIRD_PARTY_LIBRARIES_INTERNAL minimp3)
 
 ####################################
 #miniupnpc
 ####################################
-set(MINIUPNPC_SOURCE_DIR ${GODOT_SOURCE_ROOT_THIRDPARTY_DIR}/miniupnpc)
-set(MINIUPNPC_SOURCE
-    ${MINIUPNPC_SOURCE_DIR}/include/upnpcommands.h
-    ${MINIUPNPC_SOURCE_DIR}/include/miniupnpc_declspec.h
-    ${MINIUPNPC_SOURCE_DIR}/include/miniwget.h
-    ${MINIUPNPC_SOURCE_DIR}/include/portlistingparse.h
-    ${MINIUPNPC_SOURCE_DIR}/include/upnpreplyparse.h
-    ${MINIUPNPC_SOURCE_DIR}/include/miniupnpctypes.h
-    ${MINIUPNPC_SOURCE_DIR}/include/igd_desc_parse.h
-    ${MINIUPNPC_SOURCE_DIR}/include/upnpdev.h
-    ${MINIUPNPC_SOURCE_DIR}/include/miniupnpc.h
-    ${MINIUPNPC_SOURCE_DIR}/src/miniupnpcstrings.h
-    ${MINIUPNPC_SOURCE_DIR}/src/minisoap.h
-    ${MINIUPNPC_SOURCE_DIR}/src/minissdpc.c
-    ${MINIUPNPC_SOURCE_DIR}/src/addr_is_reserved.c
-    ${MINIUPNPC_SOURCE_DIR}/src/minissdpc.h
-    ${MINIUPNPC_SOURCE_DIR}/src/minixml.c
-    #${MINIUPNPC_SOURCE_DIR}/src/minixmlvalid.c
-    ${MINIUPNPC_SOURCE_DIR}/src/miniupnpc_socketdef.h
-    ${MINIUPNPC_SOURCE_DIR}/src/miniwget_private.h
-    ${MINIUPNPC_SOURCE_DIR}/src/connecthostport.h
-    ${MINIUPNPC_SOURCE_DIR}/src/addr_is_reserved.h
-    ${MINIUPNPC_SOURCE_DIR}/src/upnpcommands.c
-    ${MINIUPNPC_SOURCE_DIR}/src/portlistingparse.c
-    ${MINIUPNPC_SOURCE_DIR}/src/igd_desc_parse.c
-    ${MINIUPNPC_SOURCE_DIR}/src/minisoap.c
-    ${MINIUPNPC_SOURCE_DIR}/src/receivedata.c
-    ${MINIUPNPC_SOURCE_DIR}/src/upnpreplyparse.c
-    ${MINIUPNPC_SOURCE_DIR}/src/codelength.h
-    ${MINIUPNPC_SOURCE_DIR}/src/win32_snprintf.h
-    ${MINIUPNPC_SOURCE_DIR}/src/upnpdev.c
-    ${MINIUPNPC_SOURCE_DIR}/src/minixml.h
-    ${MINIUPNPC_SOURCE_DIR}/src/miniwget.c
-    ${MINIUPNPC_SOURCE_DIR}/src/receivedata.h
-    ${MINIUPNPC_SOURCE_DIR}/src/miniupnpc.c
-    ${MINIUPNPC_SOURCE_DIR}/src/connecthostport.c
-    )
-add_library(miniupnpc STATIC ${MINIUPNPC_SOURCE})
-target_include_directories(miniupnpc PUBLIC ${MINIUPNPC_SOURCE_DIR}/include)
-target_include_directories(miniupnpc PRIVATE ${GODOT_ENGINE_ROOT_DIRECTORY} ${GODOT_FAKEGEN_ROOT_DIR})
-list(APPEND GODOT_THIRD_PARTY_LIBRARIES_INTERNAL miniupnpc)
+add_subdirectory(miniupnpc)
 
 ####################################
 #minizip
@@ -2494,8 +1266,9 @@ set(MINIZIP_SOURCE
     ${MINIZIP_SOURCE_DIR}/zip.c
     ${MINIZIP_SOURCE_DIR}/zip.h
     )
-add_library(minizip STATIC ${MINIZIP_SOURCE})
-list(APPEND GODOT_THIRD_PARTY_LIBRARIES_INTERNAL minizip)
+godot_add_library(minizip thirdparty STATIC ${MINIZIP_SOURCE})
+target_include_directories(minizip PUBLIC ${MINIZIP_SOURCE_DIR})
+target_link_libraries(minizip PUBLIC zlib)
 
 ####################################
 #godot misc
@@ -2507,8 +1280,8 @@ set(GODOT_THIRD_PARTY_MISC_SOURCE
     ${GODOT_THIRD_PARTY_MISC_SOURCE_DIR}/cubemap_coeffs.h
     ${GODOT_THIRD_PARTY_MISC_SOURCE_DIR}/fastlz.c
     ${GODOT_THIRD_PARTY_MISC_SOURCE_DIR}/fastlz.h
-    ${GODOT_THIRD_PARTY_MISC_SOURCE_DIR}/ifaddrs-android.cc
-    ${GODOT_THIRD_PARTY_MISC_SOURCE_DIR}/ifaddrs-android.h
+    # ${GODOT_THIRD_PARTY_MISC_SOURCE_DIR}/ifaddrs-android.cc # Disabled until we support Android
+    # ${GODOT_THIRD_PARTY_MISC_SOURCE_DIR}/ifaddrs-android.h # Disabled until we support Android
     ${GODOT_THIRD_PARTY_MISC_SOURCE_DIR}/mikktspace.c
     ${GODOT_THIRD_PARTY_MISC_SOURCE_DIR}/mikktspace.h
     ${GODOT_THIRD_PARTY_MISC_SOURCE_DIR}/ok_color.h
@@ -2526,11 +1299,11 @@ set(GODOT_THIRD_PARTY_MISC_SOURCE
     ${GODOT_THIRD_PARTY_MISC_SOURCE_DIR}/stb_rect_pack.h
     ${GODOT_THIRD_PARTY_MISC_SOURCE_DIR}/yuv2rgb.h
     )
-add_library(godot-thirdparty-misc STATIC ${GODOT_THIRD_PARTY_MISC_SOURCE})
+godot_add_library(godot-thirdparty-misc thirdparty STATIC ${GODOT_THIRD_PARTY_MISC_SOURCE})
 target_compile_definitions(godot-thirdparty-misc PUBLIC R128_IMPLEMENTATION=1)
+target_compile_options(godot-thirdparty-misc PRIVATE -w)
 #HACK Only for linux
 target_include_directories(godot-thirdparty-misc PRIVATE ${GODOT_ENGINE_ROOT_DIRECTORY} ${GODOT_ENGINE_ROOT_DIRECTORY}/platform/linuxbsd)
-list(APPEND GODOT_THIRD_PARTY_LIBRARIES_INTERNAL godot-thirdparty-misc)
 
 ####################################
 #msdfgen
@@ -2590,497 +1363,28 @@ set(MSDFGEN_SOURCE
     ${MSDFGEN_SOURCE_DIR}/core/save-bmp.cpp
     ${MSDFGEN_SOURCE_DIR}/msdfgen.h
     )
-add_library(msdfgen STATIC ${MSDFGEN_SOURCE})
+godot_add_library(msdfgen thirdparty STATIC ${MSDFGEN_SOURCE})
 target_include_directories(msdfgen PUBLIC ${MSDFGEN_SOURCE_DIR})
-list(APPEND GODOT_THIRD_PARTY_LIBRARIES_INTERNAL msdfgen)
 
 ####################################
 #noise
 ####################################
-add_library(noise INTERFACE ${GODOT_SOURCE_ROOT_THIRDPARTY_DIR}/noise/FastNoiseLite.h)
-list(APPEND GODOT_THIRD_PARTY_LIBRARIES_INTERNAL noise)
+godot_add_library(noise thirdparty INTERFACE ${GODOT_SOURCE_ROOT_THIRDPARTY_DIR}/noise/FastNoiseLite.h)
 
 ####################################
 #oidn
 ####################################
-set(OIDN_SOURCE_DIR ${GODOT_SOURCE_ROOT_THIRDPARTY_DIR}/oidn)
-set(OIDN_SOURCE
-    ${OIDN_SOURCE_DIR}/common/platform.cpp
-    ${OIDN_SOURCE_DIR}/common/exception.h
-    ${OIDN_SOURCE_DIR}/common/barrier.h
-    ${OIDN_SOURCE_DIR}/common/thread.cpp
-    ${OIDN_SOURCE_DIR}/common/timer.h
-    ${OIDN_SOURCE_DIR}/common/tensor.h
-    ${OIDN_SOURCE_DIR}/common/platform.h
-    ${OIDN_SOURCE_DIR}/common/tensor.cpp
-    ${OIDN_SOURCE_DIR}/common/ref.h
-    ${OIDN_SOURCE_DIR}/common/thread.h
-    ${OIDN_SOURCE_DIR}/core/transfer_function.h
-    ${OIDN_SOURCE_DIR}/core/buffer.h
-    ${OIDN_SOURCE_DIR}/core/input_reorder.h
-    ${OIDN_SOURCE_DIR}/core/filter.cpp
-    ${OIDN_SOURCE_DIR}/core/upsample.h
-    ${OIDN_SOURCE_DIR}/core/common.h
-    ${OIDN_SOURCE_DIR}/core/network.h
-    ${OIDN_SOURCE_DIR}/core/image.h
-    ${OIDN_SOURCE_DIR}/core/autoencoder.cpp
-    ${OIDN_SOURCE_DIR}/core/transfer_function.cpp
-    ${OIDN_SOURCE_DIR}/core/node.h
-    ${OIDN_SOURCE_DIR}/core/weights_reorder.h
-    ${OIDN_SOURCE_DIR}/core/network.cpp
-    ${OIDN_SOURCE_DIR}/core/device.cpp
-    ${OIDN_SOURCE_DIR}/core/math.h
-    ${OIDN_SOURCE_DIR}/core/autoencoder.h
-    ${OIDN_SOURCE_DIR}/core/api.cpp
-    ${OIDN_SOURCE_DIR}/core/output_reorder.h
-    ${OIDN_SOURCE_DIR}/core/device.h
-    ${OIDN_SOURCE_DIR}/core/filter.h
-    ${OIDN_SOURCE_DIR}/include/OpenImageDenoise/version.h
-    ${OIDN_SOURCE_DIR}/include/OpenImageDenoise/oidn.h
-    ${OIDN_SOURCE_DIR}/include/OpenImageDenoise/oidn.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/include/mkldnn_debug.h
-    ${OIDN_SOURCE_DIR}/mkl-dnn/include/mkldnn.h
-    ${OIDN_SOURCE_DIR}/mkl-dnn/include/mkldnn_types.h
-    ${OIDN_SOURCE_DIR}/mkl-dnn/include/mkldnn_version.h
-    ${OIDN_SOURCE_DIR}/mkl-dnn/include/mkldnn.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/nstl.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/pooling.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/primitive_iterator.hpp
-    #${OIDN_SOURCE_DIR}/mkl-dnn/src/common/verbose.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/deconvolution.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/memory.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/primitive.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/scratchpad.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/batch_normalization.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/type_helpers.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/mkldnn_traits.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/lrn.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/reorder.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/primitive_desc.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/memory_desc_wrapper.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/primitive_iterator.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/verbose.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/rnn.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/math_utils.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/softmax_pd.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/scratchpad.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/mkldnn_thread_parallel_nd.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/inner_product.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/primitive_desc.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/z_magic.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/stream.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/concat.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/deconvolution_pd.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/lrn_pd.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/sum_pd.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/shuffle_pd.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/eltwise_pd.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/primitive_exec_types.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/rnn_pd.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/convolution.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/pooling_pd.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/eltwise.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/sum.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/primitive_attr.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/primitive_attr.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/mkldnn_debug.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/inner_product_pd.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/tag_traits.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/engine.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/reorder_pd.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/engine.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/query.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/mkldnn_debug_autogenerated.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/convolution_pd.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/utils.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/inner_product_pd.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/stream.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/batch_normalization_pd.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/memory_desc_wrapper.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/mkldnn_thread.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/c_types_map.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/memory.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/shuffle.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/utils.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/concat_pd.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/primitive_exec_types.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/softmax.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/memory_tracking.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/primitive.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/convolution_pd.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_avx512_core_x8s8s32x_convolution.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_uni_lrn_kernel_f32.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_avx512_core_x8s8s32x_1x1_convolution.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/cpu_concat.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_avx512_common_convolution.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/cpu_primitive.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/rnn/ref_rnn.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/rnn/jit_uni_rnn_postgemm.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/rnn/ref_rnn.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/rnn/cell_gru_lbr.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/rnn/rnn_utils.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/rnn/rnn_utils.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/rnn/rnn_reorders.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/rnn/cell_gru.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/rnn/cell_common.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/rnn/cpu_rnn_pd.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/rnn/cell_lstm.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/rnn/cell_rnn.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_avx512_core_fp32_wino_conv_2x3.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_uni_dw_conv_kernel_f32.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_avx512_common_1x1_convolution.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_avx2_convolution.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_avx512_core_fp32_wino_conv_4x3.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_avx512_core_x8s8s32x_conv_kernel.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_avx2_convolution.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/cpu_reducer.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/ref_inner_product.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/ncsp_batch_normalization.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_avx512_common_1x1_conv_kernel.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_avx512_common_lrn.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_avx512_common_conv_kernel.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/nhwc_pooling.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_sse42_convolution.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/cpu_barrier.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_avx512_core_fp32_wino_conv_4x3_kernel.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_avx512_common_convolution.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/cpu_pooling_pd.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_avx512_core_x8s8s32x_convolution.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_sse42_1x1_conv_kernel_f32.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/gemm_convolution_utils.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/cpu_engine.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/simple_sum.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/cpu_batch_normalization_pd.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_avx512_core_x8s8s32x_1x1_convolution.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/cpu_reorder_pd.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_avx2_conv_kernel_f32.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/cpu_memory.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_avx2_conv_kernel_f32.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/gemm_inner_product.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/xbyak/xbyak.h
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/xbyak/xbyak_mnemonic.h
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/xbyak/xbyak_util.h
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/xbyak/xbyak_bin2hex.h
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/xbyak/COPYRIGHT
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_uni_lrn.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/cpu_deconvolution_pd.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/cpu_barrier.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_uni_dw_convolution.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_uni_pooling.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_sse42_1x1_convolution.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_uni_i8i8_pooling.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/ref_lrn.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_uni_eltwise.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_uni_pooling.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_sse42_conv_kernel_f32.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_sse42_convolution.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_avx512_common_lrn.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/nspc_batch_normalization.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/cpu_batch_normalization_utils.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/cpu_inner_product_pd.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/nchw_pooling.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_avx512_core_fp32_wino_conv_4x3.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_avx512_core_x8s8s32x_1x1_conv_kernel.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/ref_lrn.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/cpu_reorder.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_avx512_common_convolution_winograd.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/ref_deconvolution.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/cpu_sum.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/nchw_pooling.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_avx512_core_u8s8s32x_wino_convolution.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/gemm_x8s8s32x_inner_product.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_utils/jitprofiling/jitprofiling.h
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_utils/jitprofiling/ittnotify_types.h
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_utils/jitprofiling/ittnotify_config.h
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_utils/jitprofiling/README.md
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_utils/jitprofiling/LICENSE.BSD
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_utils/jitprofiling/jitprofiling.c
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_utils/jit_utils.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_utils/jit_utils.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_uni_pool_kernel_f32.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/ref_eltwise.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/gemm_convolution_utils.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_uni_reorder_utils.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_avx512_core_fp32_wino_conv_4x3_kernel.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_transpose_src_utils.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_uni_batch_normalization.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/cpu_lrn_pd.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_avx512_common_conv_kernel.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_avx512_common_1x1_conv_kernel.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_uni_lrn.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/simple_sum.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_avx512_core_x8s8s32x_1x1_conv_kernel.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_uni_batch_normalization.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_avx512_core_x8s8s32x_deconvolution.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_uni_reorder.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_avx512_common_1x1_convolution.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/cpu_softmax_pd.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/gemm/f32/gemm_utils_f32.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/gemm/f32/gemm_utils_f32.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/gemm/f32/jit_avx512_common_gemm_f32.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/gemm/f32/jit_avx_gemm_f32.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/gemm/f32/jit_avx_gemm_f32.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/gemm/f32/ref_gemm_f32.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/gemm/f32/jit_avx512_common_gemm_f32.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/gemm/f32/ref_gemm_f32.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/gemm/gemm.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/gemm/os_blas.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/gemm/s8x8s32/jit_avx512_core_u8_copy_bn_kern.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/gemm/s8x8s32/jit_avx512_core_u8_copy_at_kern.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/gemm/s8x8s32/jit_avx512_core_kernel_gemv_s8u8s32_kern.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/gemm/s8x8s32/jit_avx512_core_gemm_s8u8s32.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/gemm/s8x8s32/ref_gemm_s8x8s32.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/gemm/s8x8s32/jit_avx512_core_gemm_s8u8s32_kern.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/gemm/s8x8s32/simple_gemm_s8s8s32.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/gemm/s8x8s32/jit_avx512_core_u8_copy_sum_bn_kern.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/gemm/s8x8s32/gemv.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/gemm/s8x8s32/ref_gemm_s8x8s32.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/gemm/s8x8s32/jit_avx512_core_kernel_gemv_s8u8s32_kern.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/gemm/s8x8s32/simple_gemm_s8s8s32.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/gemm/s8x8s32/jit_avx512_core_u8_copy_sum_at_kern.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/gemm/s8x8s32/common.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/gemm/s8x8s32/jit_avx512_core_gemv_s8u8s32.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/gemm/s8x8s32/jit_avx512_core_u8_copy_an_kern.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/gemm/s8x8s32/jit_avx512_core_u8_copy_sum_an_kern.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/gemm/s8x8s32/jit_avx512_core_gemm_s8u8s32_kern.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/gemm/s8x8s32/jit_avx512_core_u8_copy_bt_kern.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/gemm/s8x8s32/jit_avx512_core_u8_copy_sum_bt_kern.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/gemm/s8x8s32/jit_avx512_core_gemm_s8u8s32.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/gemm/gemm.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_generator.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_uni_lrn_kernel_f32.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_uni_dw_convolution.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/ref_deconvolution.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/ref_sum.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/wino_reorder.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_uni_pool_kernel_f32.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_avx2_1x1_convolution.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_uni_1x1_conv_utils.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/cpu_reducer.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/ref_convolution.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/cpu_convolution_pd.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_uni_reorder.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/cpu_sum_pd.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_sse42_conv_kernel_f32.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/simple_concat.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/ref_softmax.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_avx512_core_x8s8s32x_conv_kernel.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_avx512_common_conv_winograd_kernel_f32.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/ref_shuffle.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/gemm_x8s8s32x_convolution.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/cpu_eltwise_pd.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/ref_concat.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_avx512_common_conv_winograd_kernel_f32.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/gemm_x8s8s32x_inner_product.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/cpu_isa_traits.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_avx512_core_u8s8s32x_wino_convolution.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/ref_inner_product.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/cpu_shuffle_pd.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_sse42_1x1_conv_kernel_f32.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_avx512_core_fp32_wino_conv_2x3.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/simple_concat.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/simple_reorder.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/cpu_engine.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/gemm_convolution.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/ref_convolution.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_transpose_src_utils.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_avx2_1x1_conv_kernel_f32.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/cpu_batch_normalization_utils.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/gemm_inner_product.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/ref_shuffle.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_avx2_1x1_convolution.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_uni_eltwise.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/ref_pooling.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_uni_dw_conv_kernel_f32.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/gemm_x8s8s32x_convolution.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_avx2_1x1_conv_kernel_f32.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/nhwc_pooling.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/ref_softmax.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/cpu_concat_pd.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_avx512_core_x8s8s32x_1x1_deconvolution.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/ref_batch_normalization.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/ref_pooling.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/ref_eltwise.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/nspc_batch_normalization.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_primitive_conf.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_uni_i8i8_pooling.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/simple_q10n.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/ncsp_batch_normalization.hpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_sse42_1x1_convolution.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/ref_batch_normalization.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/gemm_convolution.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_avx512_core_x8s8s32x_deconvolution.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/cpu_memory.cpp
-    ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu/jit_avx512_common_convolution_winograd.cpp
-    )
-add_library(oidn STATIC ${OIDN_SOURCE})
-target_include_directories(oidn PRIVATE
-                           ${OIDN_SOURCE_DIR}
-                           ${OIDN_SOURCE_DIR}/mkl-dnn/include
-                           ${OIDN_SOURCE_DIR}/mkl-dnn/src
-                           ${OIDN_SOURCE_DIR}/mkl-dnn/src/cpu
-                           ${OIDN_SOURCE_DIR}/mkl-dnn/src/common
-                           ${OIDN_SOURCE_DIR}/mkl-dnn/src/common/cpu)
-target_compile_definitions(oidn PRIVATE 
-                            "MKLDNN_THR=MKLDNN_THR_SEQ"
-                            "OIDN_STATIC_LIB"
-                            "__STDC_CONSTANT_MACROS"
-                            "__STDC_LIMIT_MACROS"
-                            "DISABLE_VERBOSE"
-                            "MKLDNN_ENABLE_CONCURRENT_EXEC")
-list(APPEND GODOT_THIRD_PARTY_LIBRARIES_INTERNAL oidn)
+add_subdirectory(oidn)
 
 ####################################
 #openxr
 ####################################
-set(OPENXR_SOURCE_DIR ${GODOT_SOURCE_ROOT_THIRDPARTY_DIR}/openxr)
-set(OPENXR_SOURCE
-    ${OPENXR_SOURCE_DIR}/include/openxr/openxr_platform_defines.h
-    ${OPENXR_SOURCE_DIR}/include/openxr/openxr.h
-    ${OPENXR_SOURCE_DIR}/include/openxr/openxr_reflection.h
-    ${OPENXR_SOURCE_DIR}/include/openxr/openxr_reflection_structs.h
-    ${OPENXR_SOURCE_DIR}/include/openxr/openxr_platform.h
-    ${OPENXR_SOURCE_DIR}/include/openxr/openxr_reflection_parent_structs.h
-    ${OPENXR_SOURCE_DIR}/src/xr_generated_dispatch_table.h
-    ${OPENXR_SOURCE_DIR}/src/xr_generated_dispatch_table.c
-    ${OPENXR_SOURCE_DIR}/src/common/hex_and_handles.h
-    ${OPENXR_SOURCE_DIR}/src/common/filesystem_utils.hpp
-    ${OPENXR_SOURCE_DIR}/src/common/xr_linear.h
-    ${OPENXR_SOURCE_DIR}/src/common/stdfs_conditions.h
-    ${OPENXR_SOURCE_DIR}/src/common/filesystem_utils.cpp
-    ${OPENXR_SOURCE_DIR}/src/common/unique_asset.h
-    ${OPENXR_SOURCE_DIR}/src/common/platform_utils.hpp
-    ${OPENXR_SOURCE_DIR}/src/common/xr_dependencies.h
-    ${OPENXR_SOURCE_DIR}/src/common/object_info.h
-    ${OPENXR_SOURCE_DIR}/src/common/extra_algorithms.h
-    ${OPENXR_SOURCE_DIR}/src/common/loader_interfaces.h
-    ${OPENXR_SOURCE_DIR}/src/common/object_info.cpp
-    ${OPENXR_SOURCE_DIR}/src/loader/manifest_file.cpp
-    ${OPENXR_SOURCE_DIR}/src/loader/android_utilities.cpp
-    ${OPENXR_SOURCE_DIR}/src/loader/xr_generated_loader.cpp
-    ${OPENXR_SOURCE_DIR}/src/loader/api_layer_interface.hpp
-    ${OPENXR_SOURCE_DIR}/src/loader/exception_handling.hpp
-    ${OPENXR_SOURCE_DIR}/src/loader/runtime_interface.hpp
-    ${OPENXR_SOURCE_DIR}/src/loader/api_layer_interface.cpp
-    ${OPENXR_SOURCE_DIR}/src/loader/loader_instance.cpp
-    ${OPENXR_SOURCE_DIR}/src/loader/manifest_file.hpp
-    ${OPENXR_SOURCE_DIR}/src/loader/loader_instance.hpp
-    ${OPENXR_SOURCE_DIR}/src/loader/android_utilities.h
-    ${OPENXR_SOURCE_DIR}/src/loader/runtime_interface.cpp
-    ${OPENXR_SOURCE_DIR}/src/loader/xr_generated_loader.hpp
-    ${OPENXR_SOURCE_DIR}/src/loader/loader_logger_recorders.hpp
-    ${OPENXR_SOURCE_DIR}/src/loader/loader_core.cpp
-    ${OPENXR_SOURCE_DIR}/src/loader/loader_platform.hpp
-    ${OPENXR_SOURCE_DIR}/src/loader/loader_logger_recorders.cpp
-    ${OPENXR_SOURCE_DIR}/src/loader/loader_logger.cpp
-    ${OPENXR_SOURCE_DIR}/src/loader/loader_logger.hpp
-    ${OPENXR_SOURCE_DIR}/src/external/jsoncpp/include/json/json.h
-    ${OPENXR_SOURCE_DIR}/src/external/jsoncpp/include/json/version.h
-    ${OPENXR_SOURCE_DIR}/src/external/jsoncpp/include/json/reader.h
-    ${OPENXR_SOURCE_DIR}/src/external/jsoncpp/include/json/forwards.h
-    ${OPENXR_SOURCE_DIR}/src/external/jsoncpp/include/json/config.h
-    ${OPENXR_SOURCE_DIR}/src/external/jsoncpp/include/json/assertions.h
-    ${OPENXR_SOURCE_DIR}/src/external/jsoncpp/include/json/allocator.h
-    ${OPENXR_SOURCE_DIR}/src/external/jsoncpp/include/json/writer.h
-    ${OPENXR_SOURCE_DIR}/src/external/jsoncpp/include/json/json_features.h
-    ${OPENXR_SOURCE_DIR}/src/external/jsoncpp/include/json/value.h
-    ${OPENXR_SOURCE_DIR}/src/external/jsoncpp/src/lib_json/json_value.cpp
-    ${OPENXR_SOURCE_DIR}/src/external/jsoncpp/src/lib_json/json_writer.cpp
-    ${OPENXR_SOURCE_DIR}/src/external/jsoncpp/src/lib_json/json_reader.cpp
-    ${OPENXR_SOURCE_DIR}/src/external/jsoncpp/src/lib_json/json_tool.h
-    )
-add_library(openxr STATIC ${OPENXR_SOURCE})
-target_include_directories(openxr PUBLIC ${OPENXR_SOURCE_DIR}/include)
-target_include_directories(openxr PRIVATE
-                                ${OPENXR_SOURCE_DIR}/src
-                                ${OPENXR_SOURCE_DIR}/src/common
-                                ${OPENXR_SOURCE_DIR}/src/external/jsoncpp/include)
-target_link_libraries(openxr PUBLIC vulkan)
-#HACK - Determine the right platform
-target_compile_definitions(openxr PUBLIC XR_OS_LINUX=1)
-list(APPEND GODOT_THIRD_PARTY_LIBRARIES_INTERNAL openxr)
+add_subdirectory(openxr)
 
 ####################################
 #pcre
 ####################################
-set(PCRE2_SOURCE_DIR ${GODOT_SOURCE_ROOT_THIRDPARTY_DIR}/pcre2)
-set(PCRE2_SOURCE
-    ${PCRE2_SOURCE_DIR}/src/pcre2_convert.c
-    ${PCRE2_SOURCE_DIR}/src/pcre2_auto_possess.c
-    ${PCRE2_SOURCE_DIR}/src/pcre2_jit_neon_inc.h
-    ${PCRE2_SOURCE_DIR}/src/pcre2_xclass.c
-    ${PCRE2_SOURCE_DIR}/src/pcre2_newline.c
-    ${PCRE2_SOURCE_DIR}/src/pcre2_extuni.c
-    ${PCRE2_SOURCE_DIR}/src/pcre2_ucd.c
-    ${PCRE2_SOURCE_DIR}/src/pcre2_substring.c
-    ${PCRE2_SOURCE_DIR}/src/pcre2_config.c
-    #inlined
-    #${PCRE2_SOURCE_DIR}/src/pcre2_jit_misc.c
-    #${PCRE2_SOURCE_DIR}/src/pcre2_jit_match.c
-    ${PCRE2_SOURCE_DIR}/src/pcre2_maketables.c
-    ${PCRE2_SOURCE_DIR}/src/pcre2_ucptables.c
-    ${PCRE2_SOURCE_DIR}/src/pcre2_serialize.c
-    ${PCRE2_SOURCE_DIR}/src/pcre2_ord2utf.c
-    ${PCRE2_SOURCE_DIR}/src/pcre2_pattern_info.c
-    ${PCRE2_SOURCE_DIR}/src/config.h
-    ${PCRE2_SOURCE_DIR}/src/pcre2_compile.c
-    ${PCRE2_SOURCE_DIR}/src/pcre2_context.c
-    ${PCRE2_SOURCE_DIR}/src/pcre2_match.c
-    ${PCRE2_SOURCE_DIR}/src/pcre2.h
-    ${PCRE2_SOURCE_DIR}/src/pcre2_jit_compile.c
-    #Unsupported platforms
-    #${PCRE2_SOURCE_DIR}/src/sljit/sljitNativeMIPS_32.c
-    #${PCRE2_SOURCE_DIR}/src/sljit/sljitNativeMIPS_64.c
-    #${PCRE2_SOURCE_DIR}/src/sljit/sljitNativeMIPS_common.c
-    #${PCRE2_SOURCE_DIR}/src/sljit/sljitNativeS390X.c
-    #${PCRE2_SOURCE_DIR}/src/sljit/sljitNativeARM_32.c
-    #${PCRE2_SOURCE_DIR}/src/sljit/sljitNativeARM_T2_32.c
-    #${PCRE2_SOURCE_DIR}/src/sljit/sljitNativeSPARC_common.c
-    #${PCRE2_SOURCE_DIR}/src/sljit/sljitNativePPC_32.c
-    #${PCRE2_SOURCE_DIR}/src/sljit/sljitNativePPC_common.c
-    #${PCRE2_SOURCE_DIR}/src/sljit/sljitNativeSPARC_32.c
-    #${PCRE2_SOURCE_DIR}/src/sljit/sljitNativePPC_64.c
-    #${PCRE2_SOURCE_DIR}/src/sljit/sljitNativeARM_64.c
-    #Unused
-    #${PCRE2_SOURCE_DIR}/src/sljit/sljitExecAllocator.c
-    #${PCRE2_SOURCE_DIR}/src/sljit/sljitProtExecAllocator.c
-    #${PCRE2_SOURCE_DIR}/src/pcre2_jit_simd_inc.h
-    #${PCRE2_SOURCE_DIR}/src/sljit/sljitLir.h
-    #${PCRE2_SOURCE_DIR}/src/sljit/sljitLir.c
-    #${PCRE2_SOURCE_DIR}/src/sljit/sljitNativeX86_32.c
-    #${PCRE2_SOURCE_DIR}/src/sljit/sljitNativeX86_common.c
-    #${PCRE2_SOURCE_DIR}/src/sljit/sljitConfigInternal.h
-    #${PCRE2_SOURCE_DIR}/src/sljit/sljitConfig.h
-    #${PCRE2_SOURCE_DIR}/src/sljit/sljitWXExecAllocator.c
-    #${PCRE2_SOURCE_DIR}/src/sljit/sljitUtils.c
-    #Inlined
-    #${PCRE2_SOURCE_DIR}/src/sljit/sljitNativeX86_64.c
-
-    ${PCRE2_SOURCE_DIR}/src/pcre2_study.c
-    ${PCRE2_SOURCE_DIR}/src/pcre2_internal.h
-    ${PCRE2_SOURCE_DIR}/src/pcre2_tables.c
-    ${PCRE2_SOURCE_DIR}/src/pcre2_valid_utf.c
-    ${PCRE2_SOURCE_DIR}/src/pcre2_chartables.c
-    ${PCRE2_SOURCE_DIR}/src/pcre2_match_data.c
-    ${PCRE2_SOURCE_DIR}/src/pcre2_ucp.h
-    ${PCRE2_SOURCE_DIR}/src/pcre2_dfa_match.c
-    
-    ${PCRE2_SOURCE_DIR}/src/pcre2_intmodedep.h
-    ${PCRE2_SOURCE_DIR}/src/pcre2_substitute.c
-    ${PCRE2_SOURCE_DIR}/src/pcre2_script_run.c
-    ${PCRE2_SOURCE_DIR}/src/pcre2_error.c
-    ${PCRE2_SOURCE_DIR}/src/pcre2_find_bracket.c
-    ${PCRE2_SOURCE_DIR}/src/pcre2_string_utils.c
-    )
-add_library(pcre2 STATIC ${PCRE2_SOURCE})
-target_precompile_headers(pcre2 PRIVATE ${PCRE2_SOURCE_DIR}/src/config.h ${PCRE2_SOURCE_DIR}/src/sljit/sljitConfigInternal.h)
-target_compile_definitions(pcre2 PUBLIC
-                                #-DPCRE2_CODE_UNIT_WIDTH=16
-                                #this may also be needed
-                                -DPCRE2_CODE_UNIT_WIDTH=32
-                                -DHAVE_CONFIG_H=1
-                                -DSLJIT_VERBOSE=0)
-list(APPEND GODOT_THIRD_PARTY_LIBRARIES_INTERNAL pcre2)
+add_subdirectory(pcre2)
 
 ####################################
 #recastnavigation
@@ -3102,9 +1406,8 @@ set(RECAST_NAVIGATION_SOURCE
     ${RECAST_NAVIGATION_SOURCE_DIR}/Recast/Source/RecastRasterization.cpp
     ${RECAST_NAVIGATION_SOURCE_DIR}/Recast/Source/RecastFilter.cpp
     )
-add_library(recast-navigation STATIC ${RECAST_NAVIGATION_SOURCE})
+godot_add_library(recast-navigation thirdparty STATIC ${RECAST_NAVIGATION_SOURCE})
 target_include_directories(recast-navigation PUBLIC ${RECAST_NAVIGATION_SOURCE_DIR}/Recast/Include)
-list(APPEND GODOT_THIRD_PARTY_LIBRARIES_INTERNAL recast-navigation)
 
 ####################################
 #rvo
@@ -3118,9 +1421,8 @@ set(RVO2_SOURCE
     ${RVO2_SOURCE_DIR}/KdTree.h
     ${RVO2_SOURCE_DIR}/Vector3.h
     )
-add_library(rvo2 STATIC ${RVO2_SOURCE})
+godot_add_library(rvo2 thirdparty STATIC ${RVO2_SOURCE})
 target_include_directories(rvo2 PUBLIC ${RVO2_SOURCE_DIR})
-list(APPEND GODOT_THIRD_PARTY_LIBRARIES_INTERNAL rvo2)
 
 
 ####################################
@@ -3132,9 +1434,8 @@ set(SPIRV_REFLECT_SOURCE
     ${SPIRV_REFLECT_SOURCE_DIR}/spirv_reflect.c
     ${SPIRV_REFLECT_SOURCE_DIR}/spirv_reflect.h
     )
-add_library(spirv-reflect STATIC ${SPIRV_REFLECT_SOURCE})
+godot_add_library(spirv-reflect thirdparty STATIC ${SPIRV_REFLECT_SOURCE})
 target_include_directories(spirv-reflect PUBLIC ${SPIRV_REFLECT_SOURCE_DIR}/include)
-list(APPEND GODOT_THIRD_PARTY_LIBRARIES_INTERNAL spirv-reflect)
 
 ####################################
 #squish
@@ -3165,9 +1466,8 @@ set(SQUISH_SOURCE
     ${SQUISH_SOURCE_DIR}/squish.cpp
     ${SQUISH_SOURCE_DIR}/squish.h
     )
-add_library(squish STATIC ${SQUISH_SOURCE})
+godot_add_library(squish thirdparty STATIC ${SQUISH_SOURCE})
 target_include_directories(squish PUBLIC ${SQUISH_SOURCE_DIR})
-list(APPEND GODOT_THIRD_PARTY_LIBRARIES_INTERNAL squish)
 
 ####################################
 #thorvg
@@ -3256,7 +1556,7 @@ set(THORVG_SOURCE
     ${THORVG_SOURCE_DIR}/src/loaders/jpg/tvgJpgLoader.h
     ${THORVG_SOURCE_DIR}/src/loaders/jpg/tvgJpgd.cpp
     )
-add_library(thorvg STATIC ${THORVG_SOURCE})
+godot_add_library(thorvg thirdparty STATIC ${THORVG_SOURCE})
 target_include_directories(thorvg PUBLIC ${THORVG_SOURCE_DIR}/inc)
 target_include_directories(thorvg PUBLIC
                                 ${THORVG_SOURCE_DIR}/src/lib
@@ -3269,7 +1569,6 @@ target_include_directories(thorvg PUBLIC
                                 ${THORVG_SOURCE_DIR}/src/loaders/tvg
                                 ${THORVG_SOURCE_DIR}/src/loaders/external_png)
 target_link_libraries(thorvg PUBLIC png)
-list(APPEND GODOT_THIRD_PARTY_LIBRARIES_INTERNAL thorvg)
 
 ####################################
 #tinyexr
@@ -3279,10 +1578,10 @@ SET(TINY_EXR_SOURCE
     ${TINY_EXR_SOURCE_DIR}/tinyexr.h
     ${TINY_EXR_SOURCE_DIR}/tinyexr.cc
     )
-add_library(tinyexr STATIC ${TINY_EXR_SOURCE})
+godot_add_library(tinyexr thirdparty STATIC ${TINY_EXR_SOURCE})
 target_compile_definitions(tinyexr PRIVATE -DTINYEXR_USE_MINIZ=0)
 target_include_directories(tinyexr PUBLIC ${TINY_EXR_SOURCE_DIR})
-list(APPEND GODOT_THIRD_PARTY_LIBRARIES_INTERNAL tinyexr)
+target_link_libraries(tinyexr PRIVATE zlib)
 
 ####################################
 #vhacd
@@ -3323,76 +1622,18 @@ set(VHACD_SOURCE
     ${VHACD_SOURCE_DIR}/src/VHACD.cpp
     ${VHACD_SOURCE_DIR}/src/vhacdManifoldMesh.cpp
     )
-add_library(vhacd STATIC ${VHACD_SOURCE})
+godot_add_library(vhacd thirdparty STATIC ${VHACD_SOURCE})
 target_include_directories(vhacd PUBLIC ${VHACD_SOURCE_DIR}/inc)
-list(APPEND GODOT_THIRD_PARTY_LIBRARIES_INTERNAL vhacd)
 
 ####################################
 #volk
 ####################################
-set(VOLK_SOURCE_DIR ${GODOT_SOURCE_ROOT_THIRDPARTY_DIR}/volk)
-set(VOLK_SOURCE
-    ${VOLK_SOURCE_DIR}/volk.c
-    ${VOLK_SOURCE_DIR}/volk.h
-    )
-add_library(volk STATIC ${VOLK_SOURCE})
-target_include_directories(volk PUBLIC ${VOLK_SOURCE_DIR})
-target_compile_definitions(volk PUBLIC VK_KHR_video_decode_queue=1 VK_ENABLE_BETA_EXTENSIONS=1 VK_KHR_video_queue=1 VK_KHR_xlib_surface=1)
-target_link_libraries(volk PUBLIC vulkan)
-list(APPEND GODOT_THIRD_PARTY_LIBRARIES_INTERNAL volk)
+add_subdirectory(volk)
 
 ####################################
 #vulkan
 ####################################
-set(VULKAN_SOURCE_DIR ${GODOT_SOURCE_ROOT_THIRDPARTY_DIR}/vulkan)
-set(VULKAN_SOURCE
-    ${VULKAN_SOURCE_DIR}/include/vulkan/vulkan_ggp.h
-    ${VULKAN_SOURCE_DIR}/include/vulkan/vulkan_core.h
-    ${VULKAN_SOURCE_DIR}/include/vulkan/vulkan_ios.h
-    ${VULKAN_SOURCE_DIR}/include/vulkan/vulkan_win32.h
-    ${VULKAN_SOURCE_DIR}/include/vulkan/vulkan_xcb.h
-    ${VULKAN_SOURCE_DIR}/include/vulkan/vulkan_directfb.h
-    ${VULKAN_SOURCE_DIR}/include/vulkan/vulkan_wayland.h
-    ${VULKAN_SOURCE_DIR}/include/vulkan/vulkan_android.h
-    ${VULKAN_SOURCE_DIR}/include/vulkan/vulkan_enums.hpp
-    ${VULKAN_SOURCE_DIR}/include/vulkan/vulkan_xlib.h
-    ${VULKAN_SOURCE_DIR}/include/vulkan/vulkan_xlib_xrandr.h
-    ${VULKAN_SOURCE_DIR}/include/vulkan/vk_sdk_platform.h
-    ${VULKAN_SOURCE_DIR}/include/vulkan/vk_layer.h
-    ${VULKAN_SOURCE_DIR}/include/vulkan/vulkan_static_assertions.hpp
-    ${VULKAN_SOURCE_DIR}/include/vulkan/vulkan_macos.h
-    ${VULKAN_SOURCE_DIR}/include/vulkan/vulkan.hpp
-    ${VULKAN_SOURCE_DIR}/include/vulkan/vulkan.h
-    ${VULKAN_SOURCE_DIR}/include/vulkan/vulkan_handles.hpp
-    ${VULKAN_SOURCE_DIR}/include/vulkan/vulkan_beta.h
-    ${VULKAN_SOURCE_DIR}/include/vulkan/vulkan_structs.hpp
-    ${VULKAN_SOURCE_DIR}/include/vulkan/vulkan_fuchsia.h
-    ${VULKAN_SOURCE_DIR}/include/vulkan/vulkan_raii.hpp
-    ${VULKAN_SOURCE_DIR}/include/vulkan/vk_icd.h
-    ${VULKAN_SOURCE_DIR}/include/vulkan/vulkan_to_string.hpp
-    ${VULKAN_SOURCE_DIR}/include/vulkan/vulkan_hash.hpp
-    ${VULKAN_SOURCE_DIR}/include/vulkan/vulkan_screen.h
-    ${VULKAN_SOURCE_DIR}/include/vulkan/vulkan_format_traits.hpp
-    ${VULKAN_SOURCE_DIR}/include/vulkan/vulkan_vi.h
-    ${VULKAN_SOURCE_DIR}/include/vulkan/vulkan_funcs.hpp
-    ${VULKAN_SOURCE_DIR}/include/vulkan/vulkan_metal.h
-    ${VULKAN_SOURCE_DIR}/include/vulkan/vk_platform.h
-    ${VULKAN_SOURCE_DIR}/include/vk_video/vulkan_video_codecs_common.h
-    ${VULKAN_SOURCE_DIR}/include/vk_video/vulkan_video_codec_h264std_encode.h
-    ${VULKAN_SOURCE_DIR}/include/vk_video/vulkan_video_codec_h265std.h
-    ${VULKAN_SOURCE_DIR}/include/vk_video/vulkan_video_codec_h265std_encode.h
-    ${VULKAN_SOURCE_DIR}/include/vk_video/vulkan_video_codec_h265std_decode.h
-    ${VULKAN_SOURCE_DIR}/include/vk_video/vulkan_video_codec_h264std.h
-    ${VULKAN_SOURCE_DIR}/include/vk_video/vulkan_video_codec_h264std_decode.h
-    ${VULKAN_SOURCE_DIR}/vk_enum_string_helper.h
-    ${VULKAN_SOURCE_DIR}/vk_mem_alloc.cpp
-    ${VULKAN_SOURCE_DIR}/vk_mem_alloc.h
-    )
-add_library(vulkan STATIC ${VULKAN_SOURCE})
-target_include_directories(vulkan PUBLIC ${VULKAN_SOURCE_DIR}/include ${VULKAN_SOURCE_DIR})
-target_compile_definitions(vulkan PUBLIC VK_USE_PLATFORM_XLIB_KHR=1 USE_VOLK=1 VK_ENABLE_BETA_EXTENSIONS=1 VK_KHR_xlib_surface=1 VMA_DYNAMIC_VULKAN_FUNCTIONS=0 VMA_STATIC_VULKAN_FUNCTIONS=1 VMA_VULKAN_VERSION=1003000)
-target_link_libraries(vulkan PUBLIC volk)
-list(APPEND GODOT_THIRD_PARTY_LIBRARIES_INTERNAL vulkan)
+add_subdirectory(vulkan)
 
 ####################################
 #wslay
@@ -3412,10 +1653,10 @@ set(WSLAY_SOURCE
     ${WSLAY_SOURCE_DIR}/wslay_queue.c
     ${WSLAY_SOURCE_DIR}/wslay_queue.h
     )
-add_library(wslay STATIC ${WSLAY_SOURCE})
+godot_add_library(wslay thirdparty STATIC ${WSLAY_SOURCE})
 target_include_directories(wslay PUBLIC ${WSLAY_SOURCE_DIR})
 target_compile_definitions(wslay PRIVATE -DHAVE_CONFIG_H=1)
-list(APPEND GODOT_THIRD_PARTY_LIBRARIES_INTERNAL wslay)
+target_compile_options(wslay PRIVATE -w)
 
 ####################################
 #xatlas
@@ -3425,8 +1666,7 @@ set(XATLAS_SOURCE
     ${XATLAS_SOURCE_DIR}/xatlas.h
     ${XATLAS_SOURCE_DIR}/xatlas.cpp
     )
-add_library(xatlas STATIC ${XATLAS_SOURCE})
-list(APPEND GODOT_THIRD_PARTY_LIBRARIES_INTERNAL xatlas)
+godot_add_library(xatlas thirdparty STATIC ${XATLAS_SOURCE})
 
 ####################################
 #zlib
@@ -3460,9 +1700,9 @@ set(ZLIB_SOURCE
     ${ZLIB_SOURCE_DIR}/zutil.c
     ${ZLIB_SOURCE_DIR}/zutil.h
     )
-add_library(zlib STATIC ${ZLIB_SOURCE})
+godot_add_library(zlib thirdparty STATIC ${ZLIB_SOURCE})
 target_include_directories(zlib PUBLIC ${ZLIB_SOURCE_DIR})
-list(APPEND GODOT_THIRD_PARTY_LIBRARIES_INTERNAL zlib)
+target_compile_options(zlib PRIVATE -w)
 
 ####################################
 #zstd
@@ -3530,11 +1770,12 @@ set(ZSTD_SOURCE
     ${ZSTD_SOURCE_DIR}/zstd_errors.h
     ${ZSTD_SOURCE_DIR}/zstd.h
     )
-add_library(zstd STATIC ${ZSTD_SOURCE})
+godot_add_library(zstd thirdparty STATIC ${ZSTD_SOURCE})
 target_include_directories(zstd PUBLIC ${GODOT_SOURCE_ROOT_THIRDPARTY_DIR} ${ZSTD_SOURCE_DIR})
-list(APPEND GODOT_THIRD_PARTY_LIBRARIES_INTERNAL zstd)
 #HACK
 target_compile_definitions(zstd PRIVATE ZSTD_DISABLE_ASM=1)
 
-#Apply it to the higher level cmake file
-set(GODOT_THIRD_PARTY_LIBRARIES ${GODOT_THIRD_PARTY_LIBRARIES_INTERNAL} PARENT_SCOPE)
+####################################
+#jpeg-compressor
+####################################
+add_subdirectory(jpeg-compressor)

@@ -5,9 +5,6 @@ cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
 
 set(GODOT_SOURCE_ROOT_SERVERS_DIR ${GODOT_ENGINE_ROOT_DIRECTORY}/servers)
 
-#This variable holds all the targets of this subdirectory
-set(GODOT_SERVERS_LIBRARIES_INTERNAL)
-
 ####################################
 #Audio
 ####################################
@@ -62,9 +59,8 @@ set(AUDIO_SERVER_SOURCE
 	${AUDIO_SERVER_SOURCE_DIR}/effects/audio_effect_delay.h
 	${AUDIO_SERVER_SOURCE_DIR}/effects/audio_effect_compressor.h
 )
-add_library(godot-server-audio STATIC ${AUDIO_SERVER_SOURCE})
+godot_add_library(godot-server-audio servers STATIC ${AUDIO_SERVER_SOURCE})
 target_link_libraries(godot-server-audio PUBLIC godot-io)
-list(APPEND GODOT_SERVERS_LIBRARIES_INTERNAL godot-server-audio)
 
 ####################################
 #Camera
@@ -74,9 +70,8 @@ set(CAMERA_SERVER_SOURCE
 	${CAMERA_SERVER_SOURCE_DIR}/camera_feed.h
 	${CAMERA_SERVER_SOURCE_DIR}/camera_feed.cpp
 	)
-add_library(godot-server-camera STATIC ${CAMERA_SERVER_SOURCE})
+godot_add_library(godot-server-camera servers STATIC ${CAMERA_SERVER_SOURCE})
 target_link_libraries(godot-server-camera PUBLIC godot-io)
-list(APPEND GODOT_SERVERS_LIBRARIES_INTERNAL godot-server-camera)
 
 ####################################
 #Debugged
@@ -86,9 +81,8 @@ set(DEBUGGER_SERVER_SOURCE
 	${DEBUGGER_SERVER_SOURCE_DIR}/servers_debugger.h
 	${DEBUGGER_SERVER_SOURCE_DIR}/servers_debugger.cpp
 	)
-add_library(godot-server-debugger STATIC ${DEBUGGER_SERVER_SOURCE})
+godot_add_library(godot-server-debugger servers STATIC ${DEBUGGER_SERVER_SOURCE})
 target_link_libraries(godot-server-debugger PUBLIC godot-debugger)
-list(APPEND GODOT_SERVERS_LIBRARIES_INTERNAL godot-server-debugger)
 
 ####################################
 #Extensions
@@ -100,9 +94,8 @@ set(EXTENSIONS_SERVER_SOURCE
 	${EXTENSIONS_SERVER_SOURCE_DIR}/physics_server_3d_extension.cpp
 	${EXTENSIONS_SERVER_SOURCE_DIR}/physics_server_3d_extension.h
 	)
-add_library(godot-server-extensions STATIC ${EXTENSIONS_SERVER_SOURCE})
+godot_add_library(godot-server-extensions servers STATIC ${EXTENSIONS_SERVER_SOURCE})
 target_link_libraries(godot-server-extensions PUBLIC godot-extension)
-list(APPEND GODOT_SERVERS_LIBRARIES_INTERNAL godot-server-extensions)
 
 ####################################
 #Movie Writer
@@ -116,9 +109,8 @@ set(MOVIE_WRITER_SERVER_SOURCE
 	${MOVIE_WRITER_SERVER_SOURCE_DIR}/movie_writer_pngwav.cpp
 	${MOVIE_WRITER_SERVER_SOURCE_DIR}/movie_writer_pngwav.h
 	)
-add_library(godot-server-movie-writer STATIC ${MOVIE_WRITER_SERVER_SOURCE})
+godot_add_library(godot-server-movie-writer servers STATIC ${MOVIE_WRITER_SERVER_SOURCE})
 target_link_libraries(godot-server-movie-writer PUBLIC godot-templates)
-list(APPEND GODOT_SERVERS_LIBRARIES_INTERNAL godot-server-movie-writer)
 
 ####################################
 #Navigation
@@ -135,9 +127,8 @@ set(NAVIGATION_SERVER_SOURCE
 	${NAVIGATION_SERVER_SOURCE_DIR}/navigation_path_query_result_3d.h
 	${NAVIGATION_SERVER_SOURCE_DIR}/navigation_utilities.h
 	)
-add_library(godot-server-navigation STATIC ${NAVIGATION_SERVER_SOURCE})
+godot_add_library(godot-server-navigation servers STATIC ${NAVIGATION_SERVER_SOURCE})
 target_link_libraries(godot-server-navigation PUBLIC godot-object)
-list(APPEND GODOT_SERVERS_LIBRARIES_INTERNAL godot-server-navigation)
 
 ####################################
 #Physics 2D
@@ -176,10 +167,8 @@ set(PHYSICS_2D_SOURCE
 	${PHYSICS_2D_SOURCE_DIR}/godot_step_2d.cpp
 	${PHYSICS_2D_SOURCE_DIR}/godot_step_2d.h
 	)
-add_library(godot-server-physics-2D STATIC ${PHYSICS_2D_SOURCE})
+godot_add_library(godot-server-physics-2D servers STATIC ${PHYSICS_2D_SOURCE})
 target_link_libraries(godot-server-physics-2D PUBLIC godot-math)
-list(APPEND GODOT_SERVERS_LIBRARIES_INTERNAL godot-server-physics-2D)
-
 
 ####################################
 #Physics 3D
@@ -232,9 +221,8 @@ set(PHYSICS_3D_SOURCE
 	${PHYSICS_3D_SOURCE_DIR}/joints/godot_hinge_joint_3d.h
 	${PHYSICS_3D_SOURCE_DIR}/joints/godot_slider_joint_3d.cpp
 	)
-add_library(godot-server-physics-3D STATIC ${PHYSICS_3D_SOURCE})
+godot_add_library(godot-server-physics-3D servers STATIC ${PHYSICS_3D_SOURCE})
 target_link_libraries(godot-server-physics-3D PUBLIC godot-math)
-list(APPEND GODOT_SERVERS_LIBRARIES_INTERNAL godot-server-physics-3D)
 
 ####################################
 #Renderer
@@ -457,13 +445,15 @@ set(RENDERER_SERVER_SHADERS
 	${RENDERER_SERVER_SOURCE_DIR}/renderer_rd/shaders/forward_mobile/scene_forward_mobile_inc.glsl
 	)
 
-add_library(godot-server-renderer STATIC ${RENDERER_SERVER_SOURCE})
+#Generate output filenames for GLES3 shaders
+set(RENDERER_SERVER_INCLUDE_DIR ${CMAKE_BINARY_INCLUDE_DIR}/servers/rendering)
+string(REPLACE ${RENDERER_SERVER_SOURCE_DIR} ${RENDERER_SERVER_INCLUDE_DIR} RENDERER_SERVER_SHADERS_GENERATED "${RENDERER_SERVER_SHADERS}")
+string(REPLACE "glsl" "glsl.gen.h" RENDERER_SERVER_SHADERS_GENERATED "${RENDERER_SERVER_SHADERS_GENERATED}")
+GENERATE_SHADER_SOURCES(glsl "${RENDERER_SERVER_SHADERS}" "${RENDERER_SERVER_SHADERS_GENERATED}")
+
+godot_add_library(godot-server-renderer servers STATIC ${RENDERER_SERVER_SOURCE} ${RENDERER_SERVER_SHADERS_GENERATED})
+target_include_directories(godot-server-renderer PUBLIC ${CMAKE_BINARY_INCLUDE_DIR}) #Some other targets depend on specific generated shaders
 target_link_libraries(godot-server-renderer PUBLIC godot-templates godot-os godot-glslang spirv-reflect)
-target_include_directories(godot-server-renderer PRIVATE ${GODOT_FAKEGEN_ROOT_DIR} ${GODOT_FAKEGEN_ROOT_DIR}/servers/rendering/renderer_rd/shaders)
-
-#We need to 
-
-list(APPEND GODOT_SERVERS_LIBRARIES_INTERNAL godot-server-renderer)
 
 ####################################
 #Text
@@ -474,9 +464,8 @@ set(TEXT_SERVER_SOURCE
 	${TEXT_SERVER_SOURCE_DIR}/text_server_extension.cpp
 	${TEXT_SERVER_SOURCE_DIR}/text_server_extension.h
 	)
-add_library(godot-server-text STATIC ${TEXT_SERVER_SOURCE})
+godot_add_library(godot-server-text servers STATIC ${TEXT_SERVER_SOURCE})
 target_link_libraries(godot-server-text PUBLIC godot-object)
-list(APPEND GODOT_SERVERS_LIBRARIES_INTERNAL godot-server-text)
 
 ####################################
 #XR
@@ -492,9 +481,8 @@ set(XR_SERVER_SOURCE
 	${XR_SERVER_SOURCE_DIR}/xr_positional_tracker.cpp
 	${XR_SERVER_SOURCE_DIR}/xr_positional_tracker.h
 	)
-add_library(godot-server-xr STATIC ${XR_SERVER_SOURCE})
+godot_add_library(godot-server-xr servers STATIC ${XR_SERVER_SOURCE})
 target_link_libraries(godot-server-xr PUBLIC godot-math godot-object godot-os godot-server-renderer)
-list(APPEND GODOT_SERVERS_LIBRARIES_INTERNAL godot-server-xr)
 
 ####################################
 #Godot-Server
@@ -529,7 +517,7 @@ set(GODOT_SERVER_SOURCE
 	${GODOT_SOURCE_ROOT_SERVERS_DIR}/text_server.cpp
 	${GODOT_SOURCE_ROOT_SERVERS_DIR}/xr_server.cpp
 	)
-add_library(godot-servers STATIC ${GODOT_SERVER_SOURCE})
+godot_add_library(godot-servers servers STATIC ${GODOT_SERVER_SOURCE})
 target_link_libraries(godot-servers PUBLIC
 									godot-object
 									godot-input
@@ -548,6 +536,3 @@ target_link_libraries(godot-servers PUBLIC
 									godot-server-extensions
 									godot-server-text)
 
-list(APPEND GODOT_SERVERS_LIBRARIES_INTERNAL godot-servers)
-
-set(GODOT_SERVER_LIBRARIES ${GODOT_SERVERS_LIBRARIES_INTERNAL} PARENT_SCOPE)

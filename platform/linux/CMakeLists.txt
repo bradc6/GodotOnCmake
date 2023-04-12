@@ -1,11 +1,5 @@
 cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
 
-set(GODOT_SOURCE_ROOT_PLATFORM_DIR ${GODOT_ENGINE_ROOT_DIRECTORY}/platform)
-
-#This variable holds all the targets of this subdirectory
-set(GODOT_PLATFORM_LIBRARIES_INTERNAL)
-
-
 set(PLATFORM_LINUXBSD_SOURCE_DIR ${GODOT_SOURCE_ROOT_PLATFORM_DIR}/linuxbsd)
 set(PLATFORM_LINUXBSD_SOURCE
     ${PLATFORM_LINUXBSD_SOURCE_DIR}/crash_handler_linuxbsd.cpp
@@ -28,7 +22,6 @@ set(PLATFORM_LINUXBSD_SOURCE
     ${PLATFORM_LINUXBSD_SOURCE_DIR}/joypad_linux.h
     ${PLATFORM_LINUXBSD_SOURCE_DIR}/libudev-so_wrap.c
     ${PLATFORM_LINUXBSD_SOURCE_DIR}/libudev-so_wrap.h
-    ${PLATFORM_LINUXBSD_SOURCE_DIR}/logo.svg
     ${PLATFORM_LINUXBSD_SOURCE_DIR}/os_linuxbsd.cpp
     ${PLATFORM_LINUXBSD_SOURCE_DIR}/os_linuxbsd.h
     ${PLATFORM_LINUXBSD_SOURCE_DIR}/pck_embed.ld
@@ -36,7 +29,6 @@ set(PLATFORM_LINUXBSD_SOURCE
     ${PLATFORM_LINUXBSD_SOURCE_DIR}/platform_config.h
     ${PLATFORM_LINUXBSD_SOURCE_DIR}/platform_linuxbsd_builders.py
     ${PLATFORM_LINUXBSD_SOURCE_DIR}/README.md
-    ${PLATFORM_LINUXBSD_SOURCE_DIR}/run_icon.svg
     ${PLATFORM_LINUXBSD_SOURCE_DIR}/SCsub
     ${PLATFORM_LINUXBSD_SOURCE_DIR}/speechd-so_wrap.c
     ${PLATFORM_LINUXBSD_SOURCE_DIR}/speechd-so_wrap.h
@@ -71,30 +63,43 @@ set(PLATFORM_LINUXBSD_SOURCE
     ${PLATFORM_LINUXBSD_SOURCE_DIR}/xkbcommon-so_wrap.h
     )
 
+#Generate the Logo and Run icon
+set(PLATFORM_LINUXBSD_LOGO_SVG_SOURCE ${PLATFORM_LINUXBSD_SOURCE_DIR}/logo.svg)
+set(PLATFORM_LINUXBSD_LOGO_SVG_OUTPUT ${CMAKE_BINARY_INCLUDE_DIR}/platform/linuxbsd/logo_svg.gen.h)
+GENERATE_PLATFORM_LOGOS_AND_RUN_ICON(linuxbsd logo ${PLATFORM_LINUXBSD_LOGO_SVG_SOURCE} ${PLATFORM_LINUXBSD_LOGO_SVG_OUTPUT})
+set(PLATFORM_LINUXBSD_RUN_SVG_SOURCE ${PLATFORM_LINUXBSD_SOURCE_DIR}/run_icon.svg)
+set(PLATFORM_LINUXBSD_RUN_SVG_OUTPUT ${CMAKE_BINARY_INCLUDE_DIR}/platform/linuxbsd/run_icon_svg.gen.h)
+GENERATE_PLATFORM_LOGOS_AND_RUN_ICON(linuxbsd run_icon ${PLATFORM_LINUXBSD_RUN_SVG_SOURCE} ${PLATFORM_LINUXBSD_RUN_SVG_OUTPUT})
+
 
 #Find the package to link and enable/disable
-add_library(platform-linuxbsd STATIC ${PLATFORM_LINUXBSD_SOURCE})
+godot_add_library(platform-linuxbsd platform STATIC ${PLATFORM_LINUXBSD_SOURCE} ${PLATFORM_LINUXBSD_LOGO_SVG_OUTPUT} ${PLATFORM_LINUXBSD_RUN_SVG_OUTPUT})
 target_include_directories(platform-linuxbsd PRIVATE
                                              ${GODOT_ENGINE_ROOT_DIRECTORY}
                                              ${DBUS_INCLUDE_DIRS}
                                              ${GODOT_FAKEGEN_ROOT_DIR}
-                                             ${GODOT_FAKEGEN_ROOT_DIR}/platform/linuxbsd)
+                                             ${CMAKE_BINARY_INCLUDE_DIR}/platform/linuxbsd)
 target_include_directories(platform-linuxbsd PUBLIC ${PLATFORM_LINUXBSD_SOURCE_DIR})
-target_link_libraries(platform-linuxbsd PUBLIC ${DBUS_LIBRARIES} driver-unix driver-alsa driver-vulkan driver-alsa-midi driver-gles3 driver-pulseaudio)
+
+#Depends on a single generated shader from godot-server-renderer
+target_link_libraries(platform-linuxbsd PUBLIC ${DBUS_LIBRARIES} driver-unix godot-server-renderer)
 
 #Required to always be enabled on linux 
 target_compile_definitions(platform-linuxbsd PUBLIC JOYDEV_ENABLED=1 ALSAMIDI_ENABLED=1)
 
-if(${ALSA_FOUND})
+if(${WANT_ALSA} AND ${ALSA_FOUND})
     target_compile_definitions(platform-linuxbsd PUBLIC ALSA_ENABLED=1)
+    target_link_libraries(platform-linuxbsd PUBLIC driver-alsa)
+    target_link_libraries(platform-linuxbsd PUBLIC driver-alsa-midi)
 endif()
 
-if(${PULSEAUDIO_FOUND})
+if(${WANT_PULSEAUDIO} AND ${PULSEAUDIO_FOUND})
     target_compile_definitions(platform-linuxbsd PUBLIC PULSEAUDIO_ENABLED=1)
+    target_link_libraries(platform-linuxbsd PUBLIC driver-pulseaudio)
 endif()
 
 
-if(${X11_FOUND})
+if(${WANT_X11} AND ${X11_FOUND})
     target_compile_definitions(platform-linuxbsd PUBLIC X11_ENABLED=1)
 endif()
 
@@ -102,28 +107,27 @@ if(${FOUND_MNTENT})
     target_compile_definitions(platform-linuxbsd PUBLIC HAVE_MNTENT=1)
 endif()
 
-if(${Fontconfig_FOUND})
+if(${WANT_FONTCONFIG} AND ${Fontconfig_FOUND})
     target_compile_definitions(platform-linuxbsd PUBLIC FONTCONFIG_ENABLED=1)
 endif()
 
-if(${Vulkan_FOUND})
+if(${WANT_VULKAN} AND ${Vulkan_FOUND})
     target_compile_definitions(platform-linuxbsd PUBLIC VULKAN_ENABLED=1 USE_VOLK=1)
     target_link_libraries(platform-linuxbsd PUBLIC vulkan glad volk)
     target_link_libraries (platform-linuxbsd PUBLIC ${Vulkan_LIBRARY})
+    target_link_libraries(platform-linuxbsd PUBLIC driver-vulkan)
 endif()
 
-if(${OPENGL_FOUND})
+if(${WANT_OPENGL} AND ${OPENGL_FOUND})
     target_compile_definitions(platform-linuxbsd PUBLIC GLES3_ENABLED=1)
     target_link_libraries(platform-linuxbsd PUBLIC OpenGL::GL)
+    target_link_libraries(platform-linuxbsd PUBLIC driver-gles3)
 endif()
 
-if(${X11_FOUND})
+if(${WANT_X11} AND ${X11_FOUND})
     target_link_libraries(platform-linuxbsd PUBLIC ${X11_LIBRARIES})
 endif()
 
-if(${DBUS_FOUND})
+if(${WANT_DBUS} AND ${DBUS_FOUND})
     target_compile_definitions(platform-linuxbsd PUBLIC DBUS_ENABLED=1)
 endif()
-
-list(APPEND GODOT_PLATFORM_LIBRARIES_INTERNAL platform-linuxbsd)
-set(GODOT_PLATFORM_LIBRARIES ${GODOT_PLATFORM_LIBRARIES_INTERNAL} PARENT_SCOPE)
