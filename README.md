@@ -25,8 +25,8 @@ The Cmake build scripts are SUPER ALPHA so expect to modify and [hopefully] cont
 What builds currently? Located in the "develop" branch
 
  - [ ] Generators
-    - [ ] GLES Shaders
-    - [ ] Vulkan Shaders
+    - [x] GLES Shaders
+    - [x] Vulkan Shaders
  - [-] Godot Editor
     - [-] Linux (x86_64 Debug)
     - [ ] MacOS
